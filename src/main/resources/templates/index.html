@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spring Boot Weather</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/7db17794ab.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container-sm">
+        <div class="row mt-4">
+            <div class="">
+                <div class="location">
+                    <p class="mb-1"><span th:text="${ location.currentDateTime }"></span></p>
+                    <h2>
+                        <span th:text="${ weather.weatherMain }"></span> with
+                        <span th:text="${ weather.weatherDescription }"></span>
+                    </h2>
+                    <h6 class="fw-light">
+                        <span th:text="${ location.cityName }"></span>,
+                        <span th:text="${ location.country }"></span>
+                    </h6>
+                </div>
+                <div class="weather">
+                    <div class="row weather-details">
+                        <div class="col-3">
+                            <p class="fw-light hwi-p">
+                                Morning <span th:text="${daily.morningTemp}"></span>&#176;C &#183;
+                                Day <span th:text="${daily.dayTemp}"></span>&#176;C &#183;
+                                Night <span th:text="${daily.nightTemp}"></span>&#176;C
+                            </p>
+                            <h1 class="mt-2"><span th:text="${weather.tempValue}"></span>&#176;C</h1>
+                            <p class="fw-light">Feel like <span th:text="${weather.feelsLikeValue}"></span>&#176;C</p>
+                        </div>
+                        <div class="col">
+                            <img class="cwi" th:src="${weather.weatherIcon}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <p class="hwi-p-temp"><span th:text="${hourly.tempValue}"></span>&#176;</p>
+                        <img class="hwi" th:src="${hourly.iconLink}">
+                        <p class="hwi-p"><span th:text="${hourly.timeValue}"></span></p>
+                    </div>
+                </div>
+                <hr>
+                <div class="details">
+                    <p class="fw-bolder">Current details</p>
+                    <div>
+                        <table>
+                            <tr>
+                                <td class="fw-light">Humidity</td>
+                                <td><span th:text="${weather.humidity}"></span> %</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-light">Pressure</td>
+                                <td><span th:text="${weather.pressure}"></span> hPa</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-light">UV index</td>
+                                <td><span th:text="${weather.uvi}"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-light">Visibility</td>
+                                <td><span th:text="${weather.visibility}"></span> km</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <hr>
+                <div class="precipitation">
+                    <p class="fw-bolder">Precipitation</p>
+                    <table>
+                        <tr>
+                            <td class="fw-light">Chance</td>
+                            <td class="fw-light text-center hwi-p"><span th:text="${hourly.rainValue}"></span>%</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="text-center"><i class="fas fa-tint wind-speed"></i></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-light">Volume(mm)</td>
+                            <td class="fw-light text-center hwi-p"><span th:text="${hourly.rain}"></span></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="hwi-p"><span th:text="${hourly.timeValue}"></span></td>
+                        </tr>
+                    </table>
+                </div>
+                <hr>
+                <div class="wind">
+                    <p class="fw-bolder">Wind</p>
+                    <div class="wind-meter">
+                        <h1>
+                            <span class="wind-speed" th:text="${weather.windSpeedValue}"></span>
+                            <span class="wind-meter fw-light"> km/h</span>
+                        </h1>
+                    </div>
+                    <div class="mt-2">
+                        <p class="fw-light mb-0 hwi-p"><span th:text="${hourly.windSpeedValue}"></span> km/h</p>
+                        <p class="mb-0 hwi-p-temp"><i class="fas fa-wind wind-speed"></i></p>
+                        <p class="hwi-p"><span th:text="${hourly.timeValue}"></span></p>
+                    </div>
+                </div>
+                <hr>
+                <div class="sunCondition mb-7">
+                    <p class="fw-bolder">Sunrise & sunset</p>
+                    <div class="row weather-details">
+                        <div class="col-4">
+                            <p class="fw-lighter">Sunrise <br>
+                                <span class="fw-light" th:text="${weather.sunriseValue}"></span>
+                            </p>
+                        </div>
+                        <div class="col-4">
+                            <p class="fw-lighter">Sunset <br>
+                                <span class="fw-light" th:text="${weather.sunsetValue}"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
