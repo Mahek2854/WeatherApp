@@ -218,4 +218,5 @@ public class CurrentWeather {
     public void setWindSpeedValue(Integer windSpeedValue) {
         this.windSpeedValue = windSpeedValue;
     }
+
 }

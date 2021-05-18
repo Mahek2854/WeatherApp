@@ -79,16 +79,17 @@ public class WeatherController {
         theWeather = mapper.readValue(resp.getBody(), CurrentWeather.class);
         theHourlyWeather = mapper.readValue(resp.getBody(), HourlyWeather.class);
         JSONObject object = new JSONObject(theHourlyWeather);
-
         theDailyWeather = mapper.readValue(resp.getBody(), DailyWeather.class);
 
-            /* visibility m to km */
+        /* conversion */
         Integer visibilityConv = theWeather.getVisibility() / 1000;
         theWeather.setVisibility(visibilityConv);
         Double windSpeedConv = theWeather.getWindSpeed() * 3.6;
         theWeather.setWindSpeed(windSpeedConv);
         Double windHourlySpeedConv = theHourlyWeather.getWindSpeed() * 3.6;
         theHourlyWeather.setWindSpeed(windHourlySpeedConv);
+        Double rainPossibility = theHourlyWeather.getPop() * 100;
+        theHourlyWeather.setPop(rainPossibility);
 
         /* date conv */
         Instant instantSunset = Instant.ofEpochSecond(theWeather.getSunset());

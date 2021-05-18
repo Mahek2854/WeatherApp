@@ -16,11 +16,13 @@ public class HourlyWeather {
     private double windSpeed;
     private Integer windDegree;
     private double rain;
+    private double pop;
 
     private Integer tempValue;
     private String iconLink;
     private Integer windSpeedValue;
     private Integer rainValue;
+    private Integer rainPossibility;
 
     public Integer getTime() {
         return time;
@@ -71,19 +73,30 @@ public class HourlyWeather {
         return rain;
     }
 
-    @JsonProperty("rain")
+    @JsonProperty("1h")
     public void setRain(double rain) {
         this.rain = rain;
+    }
+
+    public double getPop() {
+        return pop;
+    }
+
+    @JsonProperty("pop")
+    public void setPop(double pop) {
+        this.pop = pop;
     }
 
     @JsonProperty("hourly")
     public void setHourlyWeather(List<Map<String, Object>> hourlyEntries) {
         Map<String, Object> hourly = hourlyEntries.get(1);
         setWeather((List<Map<String, Object>>) hourly.get("weather"));
+        setRainValue((Map<String, Object>) hourly.get("rain"));
         setTemperature((double) hourly.get("temp"));
         setWindSpeed((double) hourly.get("wind_speed"));
         setWindDegree((Integer) hourly.get("wind_deg"));
         setTime((Integer) hourly.get("dt"));
+        setPop((double) hourly.get("pop"));
     }
 
     @JsonProperty("weather")
@@ -93,8 +106,8 @@ public class HourlyWeather {
     }
 
     @JsonProperty("rain")
-    public void setRain(Map<String, Object> rainEntries) {
-        setRain((double) rainEntries.get("rain"));
+    public void setRainValue(Map<String, Object> rainn) {
+        setRain((double) rainn.get("1h"));
     }
 
     public String getTimeValue() {
@@ -135,5 +148,13 @@ public class HourlyWeather {
 
     public void setRainValue(Integer rainValue) {
         this.rainValue = rainValue;
+    }
+
+    public Integer getRainPossibility() {
+        return rainPossibility = Math.toIntExact(Math.round(pop));
+    }
+
+    public void setRainPossibility(Integer rainPossibility) {
+        this.rainPossibility = rainPossibility;
     }
 }
