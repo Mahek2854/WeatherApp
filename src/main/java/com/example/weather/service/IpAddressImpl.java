@@ -1,49 +1,49 @@
 package com.example.weather.service;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @Service
-public class IpAddressImpl implements IpAddress{
+public class IpAddressImpl {
 
-    private final String LOCALHOST_IPV4 = "127.0.0.1";
-    private final String LOCALHOST_IPV6 = "0:0:0:0:0:0:0:1";
+    public String getClientIpAddress(String xForwardedFor, String xRealIp, String remoteAddr) {
 
-    @Override
-    public String getClientIp(HttpServletRequest request) {
-        String ipAddress = request.getHeader("X-Forwarded-For");
-        if(StringUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
-            ipAddress = request.getHeader("Proxy-Client-IP");
+        // Replace deprecated StringUtils.isEmpty with null/blank checks
+        if (xForwardedFor != null && !xForwardedFor.trim().isEmpty()) {
+            return xForwardedFor.split(",")[0].trim();
         }
 
-        if(StringUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
-            ipAddress = request.getHeader("WL-Proxy-Client-IP");
+        if (xRealIp != null && !xRealIp.trim().isEmpty()) {
+            return xRealIp;
         }
 
-        if(StringUtils.isEmpty(ipAddress) || "unknown".equalsIgnoreCase(ipAddress)) {
-            ipAddress = request.getRemoteAddr();
-            if(LOCALHOST_IPV4.equals(ipAddress) || LOCALHOST_IPV6.equals(ipAddress)) {
-                try {
-                    InetAddress inetAddress = InetAddress.getLocalHost();
-                    ipAddress = inetAddress.getHostAddress();
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                }
-            }
+        if (remoteAddr != null && !remoteAddr.trim().isEmpty()) {
+            return remoteAddr;
         }
 
-        if(!StringUtils.isEmpty(ipAddress)
-                && ipAddress.length() > 15
-                && ipAddress.indexOf(",") > 0) {
-            ipAddress = ipAddress.substring(0, ipAddress.indexOf(","));
-        }
-
-        return ipAddress;
+        return "127.0.0.1"; // Default fallback
     }
 
+    public boolean isValidIpAddress(String ip) {
+        if (ip == null || ip.trim().isEmpty()) {
+            return false;
+        }
+
+        // Basic IP validation logic
+        String[] parts = ip.split("\\.");
+        if (parts.length != 4) {
+            return false;
+        }
+
+        try {
+            for (String part : parts) {
+                int num = Integer.parseInt(part);
+                if (num < 0 || num > 255) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 }

@@ -1,47 +1,83 @@
 package com.example.weather.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.persistence.*;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.SimpleTimeZone;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Entity
+@Table(name = "locations")
 public class Location {
 
-    public String cityName;
-    public String country;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, hh:mm a");
-    Date date = new Date();
-    String currentDateTime = dateFormat.format(date);
+    @Column(name = "city")
+    private String city;
 
-    public String getCityName() {
-        return cityName;
-    }
+    @Column(name = "city_name")
+    private String cityName;
 
-    @JsonProperty("cityName")
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
-    }
+    @Column(name = "country")
+    private String country;
 
-    public String getCountry() {
-        return country;
-    }
+    @Column(name = "state")
+    private String state;
 
-    @JsonProperty("countryName")
-    public void setCountry(String country) {
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
+    // Transient field for display purposes
+    @Transient
+    private String currentDateTime;
+
+    // Constructors
+    public Location() {}
+
+    public Location(String city, String country, Double latitude, Double longitude) {
+        this.city = city;
         this.country = country;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
-    public String getCurrentDateTime() {
-        return currentDateTime;
-    }
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setCurrentDateTime(String currentDateTime) {
-        this.currentDateTime = currentDateTime;
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
+
+    public String getCityName() { return cityName; }
+    public void setCityName(String cityName) { this.cityName = cityName; }
+
+    public String getCountry() { return country; }
+    public void setCountry(String country) { this.country = country; }
+
+    public String getState() { return state; }
+    public void setState(String state) { this.state = state; }
+
+    public Double getLatitude() { return latitude; }
+    public void setLatitude(Double latitude) { this.latitude = latitude; }
+
+    public Double getLongitude() { return longitude; }
+    public void setLongitude(Double longitude) { this.longitude = longitude; }
+
+    public String getCurrentDateTime() { return currentDateTime; }
+    public void setCurrentDateTime(String currentDateTime) { this.currentDateTime = currentDateTime; }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "id=" + id +
+                ", city='" + city + '\'' +
+                ", cityName='" + cityName + '\'' +
+                ", country='" + country + '\'' +
+                ", state='" + state + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", currentDateTime='" + currentDateTime + '\'' +
+                '}';
     }
 }

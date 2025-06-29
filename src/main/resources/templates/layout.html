@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} ?: 'WeatherPro Business'">WeatherPro Business</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/weather-app/css/business-styles.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+<!-- HEADER / NAV -->
+<header class="main-header">
+    <nav class="navbar">
+        <div class="nav-container">
+            <!-- LOGO -->
+            <div class="nav-logo">
+                <a href="/weather-app/" class="logo-link">
+                    <i class="fas fa-cloud-sun logo-icon"></i>
+                    <div class="logo-text">
+                        <span class="brand-name">WeatherPro</span>
+                        <span class="brand-tagline">For Business</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- NAVIGATION MENU -->
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/weather-app/dashboard" class="nav-link">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/weather-app/safety" class="nav-link">Safety</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/weather-app/services/alerts" class="nav-link">Alerts</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/weather-detailed" class="nav-link">Detailed View</a>
+                </li>
+            </ul>
+
+            <!-- ACTIONS -->
+            <div class="nav-actions">
+                <a href="/weather-app/get-started" class="cta-button">
+                    Get Started
+                </a>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<!-- MAIN PAGE CONTENT FROM CHILD -->
+<main class="main-content" layout:fragment="content">
+    <!-- Page-specific content will be inserted here -->
+</main>
+
+<!-- FOOTER -->
+<footer class="main-footer" style="background:#2c3e50; color:#fff; padding:20px 0; margin-top:40px;">
+    <div class="footer-container" style="max-width:1200px; margin:0 auto; padding:0 20px;">
+        <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+            <div>
+                <h3>WeatherPro</h3>
+                <p>Professional weather services for businesses worldwide.</p>
+            </div>
+            <div>
+                <h4>Quick Links</h4>
+                <ul style="list-style:none; padding:0;">
+                    <li><a href="/weather-app/dashboard" style="color:#fff;">Dashboard</a></li>
+                    <li><a href="/weather-app/services/forecasting" style="color:#fff;">Forecasting</a></li>
+                    <li><a href="/weather-app/contact" style="color:#fff;">Contact</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Support</h4>
+                <ul style="list-style:none; padding:0;">
+                    <li><a href="/weather-app/support/documentation" style="color:#fff;">Documentation</a></li>
+                    <li><a href="/weather-app/support/faq" style="color:#fff;">FAQ</a></li>
+                </ul>
+            </div>
+        </div>
+        <div style="margin-top:20px; text-align:center; font-size:0.9rem;">
+            &copy; 2025 WeatherPro. All rights reserved.
+        </div>
+    </div>
+</footer>
+</body>
+</html>

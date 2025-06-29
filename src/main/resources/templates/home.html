@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout :: layout">
+
+<head>
+    <title th:text="${pageTitle} ?: 'WeatherPro Business - Home'">WeatherPro Business</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <!-- Hero Section -->
+    <section class="hero-section" style="padding: 60px 20px; background: linear-gradient(135deg, #3498db, #2ecc71); color: white;">
+        <div style="max-width: 1100px; margin: auto; text-align: center;">
+            <h1 style="font-size: 3rem; margin-bottom: 10px;">Welcome to WeatherPro Business</h1>
+            <p style="font-size: 1.25rem; margin-bottom: 20px;">
+                Professional weather services to help your business make better decisions.
+            </p>
+            <a href="/weather-app/dashboard" class="btn btn-primary" style="background: white; color: #3498db; padding: 10px 20px; border-radius: 6px; font-weight: bold;">
+                <i class="fas fa-tachometer-alt"></i> View Dashboard
+            </a>
+        </div>
+    </section>
+
+    <!-- Services Teaser -->
+    <section class="services-preview" style="padding: 50px 20px; background: #f8f9fa;">
+        <div style="max-width: 1100px; margin: auto;">
+            <h2 style="text-align: center; font-size: 2rem; margin-bottom: 30px;">Our Key Services</h2>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                <div style="flex: 1 1 300px; background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                    <h3><i class="fas fa-thermometer-half"></i> Real-Time Weather</h3>
+                    <p>Get minute-by-minute updates and live weather insights for your location.</p>
+                    <a href="/weather-app/services/forecasting">Learn more →</a>
+                </div>
+                <div style="flex: 1 1 300px; background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Weather Alerts</h3>
+                    <p>Stay safe with severe weather warnings and notification systems.</p>
+                    <a href="/weather-app/services/alerts">Learn more →</a>
+                </div>
+                <div style="flex: 1 1 300px; background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                    <h3><i class="fas fa-code"></i> API Integration</h3>
+                    <p>Embed live weather data into your applications or platforms.</p>
+                    <a href="/weather-app/services/api">View API Docs →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>
