@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/weather-app")
+@RequestMapping("/business") // CHANGED FROM /weather-app to /business
 public class BusinessController {
 
     @GetMapping("/")

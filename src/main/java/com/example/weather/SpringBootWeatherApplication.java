@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.example.weather"}) // Ensure this matches your package structure
+
 public class SpringBootWeatherApplication {
 
 	public static void main(String[] args) {

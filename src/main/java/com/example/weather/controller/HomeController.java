@@ -13,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -29,24 +28,90 @@ public class HomeController {
     // 🔁 Redirect root "/" to business homepage
     @GetMapping("/")
     public String redirectToBusiness() {
-        return "redirect:/weather-app/";
+        return "redirect:/business/";
     }
 
-    // 🌀 Weather detail dashboard route
+    // 🌀 Weather detail dashboard route - MAIN WEATHER PAGE
     @GetMapping("/weather-detailed")
     public String weatherDetailed(Model model,
                                   @RequestParam(required = false) String city,
                                   @RequestParam(required = false) String country,
                                   @RequestParam(required = false) Double lat,
                                   @RequestParam(required = false) Double lon) {
-        return loadWeatherDashboard(model, city, country, lat, lon);
-    }
 
-    private String loadWeatherDashboard(Model model, String city, String country, Double lat, Double lon) {
-        // (Same logic as your original implementation — no changes here)
-        // It loads index.html with weather, location, hourly, daily info
-        // ...
-        return "index";
+        System.out.println("=== Weather Detailed Route Accessed ===");
+        System.out.println("City: " + city + ", Country: " + country + ", Lat: " + lat + ", Lon: " + lon);
+
+        try {
+            WeatherData weather = null;
+            Location location = null;
+
+            // Get weather data based on parameters
+            if (lat != null && lon != null) {
+                System.out.println("Fetching weather by coordinates: " + lat + ", " + lon);
+                weather = weatherService.getWeatherByCoordinates(lat, lon);
+                if (weather != null) {
+                    location = createLocationFromWeather(weather);
+                    System.out.println("Weather found by coordinates: " + weather.getCity());
+                }
+            } else if (city != null && !city.trim().isEmpty()) {
+                System.out.println("Fetching weather by city: " + city + ", country: " + country);
+                if (country != null && !country.trim().isEmpty()) {
+                    weather = weatherService.getCompleteWeatherData(city, country);
+                } else {
+                    weather = weatherService.getCompleteWeatherData(city, "");
+                }
+
+                if (weather != null) {
+                    location = createLocationFromWeather(weather);
+                    System.out.println("Weather found by city: " + weather.getCity() + ", Temp: " + weather.getTemperature());
+                } else {
+                    location = createLocation(city, country);
+                    System.out.println("No weather data found, using location: " + city);
+                }
+            }
+
+            // If no weather data found, use defaults
+            if (weather == null) {
+                System.out.println("Using default weather data");
+                location = location != null ? location : createDefaultLocation();
+
+                // Set current date time
+                location.setCurrentDateTime(LocalDateTime.now()
+                        .format(DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy - HH:mm")));
+
+                model.addAttribute("location", location);
+                model.addAttribute("weather", createDefaultWeather());
+                model.addAttribute("hourly", createDefaultHourlyViewModel());
+                model.addAttribute("daily", createDefaultDailyViewModel());
+            } else {
+                // Use real weather data
+                System.out.println("Using real weather data for: " + weather.getCity());
+                location.setCurrentDateTime(LocalDateTime.now()
+                        .format(DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy - HH:mm")));
+
+                model.addAttribute("location", location);
+                model.addAttribute("weather", createWeatherViewModel(weather));
+                model.addAttribute("hourly", createHourlyViewModel(weather));
+                model.addAttribute("daily", createDailyViewModel(weather));
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error loading weather dashboard: " + e.getMessage());
+            e.printStackTrace();
+
+            // Fallback to defaults on error
+            Location defaultLocation = createDefaultLocation();
+            defaultLocation.setCurrentDateTime(LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy - HH:mm")));
+
+            model.addAttribute("location", defaultLocation);
+            model.addAttribute("weather", createDefaultWeather());
+            model.addAttribute("hourly", createDefaultHourlyViewModel());
+            model.addAttribute("daily", createDefaultDailyViewModel());
+        }
+
+        return "index"; // Returns index.html template
     }
 
     private Location createLocationFromWeather(WeatherData weather) {
@@ -61,9 +126,9 @@ public class HomeController {
 
     private Location createLocation(String city, String country) {
         Location location = new Location();
-        location.setCityName(city);
-        location.setCity(city);
-        location.setCountry(country);
+        location.setCityName(city != null ? city : "Unknown City");
+        location.setCity(city != null ? city : "Unknown City");
+        location.setCountry(country != null ? country : "Unknown Country");
         return location;
     }
 
@@ -148,21 +213,19 @@ public class HomeController {
         return daily;
     }
 
-    // Default methods remain the same...
+    // Default methods
     private Location createDefaultLocation() {
         Location location = new Location();
         location.setCityName("New York");
         location.setCity("New York");
         location.setCountry("US");
-        location.setCurrentDateTime(LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("EEEE, MMMM dd, yyyy - HH:mm")));
         return location;
     }
 
     private WeatherViewModel createDefaultWeather() {
         WeatherViewModel viewModel = new WeatherViewModel();
         viewModel.setWeatherIcon("https://openweathermap.org/img/wn/01d@2x.png");
-        viewModel.setWeatherDescription("API key required for real data");
+        viewModel.setWeatherDescription("Sample weather data - Real API data will load when available");
         viewModel.setTempValue(25);
         viewModel.setFeelsLikeValue(27);
         viewModel.setWeatherMain("Clear");

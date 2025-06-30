@@ -17,9 +17,14 @@
             <p style="font-size: 1.25rem; margin-bottom: 20px;">
                 Professional weather services to help your business make better decisions.
             </p>
-            <a href="/weather-app/dashboard" class="btn btn-primary" style="background: white; color: #3498db; padding: 10px 20px; border-radius: 6px; font-weight: bold;">
-                <i class="fas fa-tachometer-alt"></i> View Dashboard
-            </a>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="/business/dashboard" class="btn btn-primary" style="background: white; color: #3498db; padding: 12px 24px; border-radius: 6px; font-weight: bold; text-decoration: none;">
+                    <i class="fas fa-tachometer-alt"></i> View Dashboard
+                </a>
+                <a href="/weather-detailed" class="btn btn-secondary" style="background: rgba(255,255,255,0.2); color: white; padding: 12px 24px; border-radius: 6px; font-weight: bold; text-decoration: none; border: 2px solid white;">
+                    <i class="fas fa-thermometer-half"></i> Live Weather
+                </a>
+            </div>
         </div>
     </section>
 
@@ -31,18 +36,40 @@
                 <div style="flex: 1 1 300px; background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
                     <h3><i class="fas fa-thermometer-half"></i> Real-Time Weather</h3>
                     <p>Get minute-by-minute updates and live weather insights for your location.</p>
-                    <a href="/weather-app/services/forecasting">Learn more →</a>
+                    <a href="/weather-detailed" style="color: #3498db; text-decoration: none; font-weight: 500;">View Live Weather →</a>
                 </div>
                 <div style="flex: 1 1 300px; background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
                     <h3><i class="fas fa-exclamation-triangle"></i> Weather Alerts</h3>
                     <p>Stay safe with severe weather warnings and notification systems.</p>
-                    <a href="/weather-app/services/alerts">Learn more →</a>
+                    <a href="/business/services/alerts" style="color: #3498db; text-decoration: none; font-weight: 500;">Learn more →</a>
                 </div>
                 <div style="flex: 1 1 300px; background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
                     <h3><i class="fas fa-code"></i> API Integration</h3>
                     <p>Embed live weather data into your applications or platforms.</p>
-                    <a href="/weather-app/services/api">View API Docs →</a>
+                    <a href="/business/services/api" style="color: #3498db; text-decoration: none; font-weight: 500;">View API Docs →</a>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Access Section -->
+    <section class="quick-access" style="padding: 40px 20px; background: white;">
+        <div style="max-width: 1100px; margin: auto; text-align: center;">
+            <h2 style="font-size: 1.8rem; margin-bottom: 20px;">Quick Access</h2>
+            <p style="margin-bottom: 30px; color: #666;">Jump straight to what you need</p>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="/weather-detailed?city=New York&country=US" class="quick-btn" style="background: #3498db; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: 500;">
+                    <i class="fas fa-building"></i> New York Weather
+                </a>
+                <a href="/weather-detailed?city=London&country=GB" class="quick-btn" style="background: #e74c3c; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: 500;">
+                    <i class="fas fa-building"></i> London Weather
+                </a>
+                <a href="/weather-detailed?city=Tokyo&country=JP" class="quick-btn" style="background: #f39c12; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: 500;">
+                    <i class="fas fa-building"></i> Tokyo Weather
+                </a>
+                <a href="/weather-detailed?city=Sydney&country=AU" class="quick-btn" style="background: #27ae60; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: 500;">
+                    <i class="fas fa-building"></i> Sydney Weather
+                </a>
             </div>
         </div>
     </section>
