@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout :: layout">
+
+<head>
+    <title th:text="${pageTitle} ?: 'Safety Measures - WeatherPro Business'">Safety Measures - WeatherPro Business</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <!-- Hero Section - Matching the gradient theme -->
+    <section class="hero-section" style="padding: 80px 20px 60px; background: linear-gradient(135deg, #4a90e2, #50c878); color: white;">
+        <div style="max-width: 1100px; margin: auto; text-align: center;">
+            <div style="margin-bottom: 20px;">
+                <i class="fas fa-shield-alt" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.9;"></i>
+            </div>
+            <h1 style="font-size: 3rem; margin-bottom: 15px; font-weight: 300; letter-spacing: -1px;">Weather Safety Center</h1>
+            <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.95; font-weight: 300; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Comprehensive safety guidelines and emergency protocols to protect your business and employees during severe weather events.
+            </p>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="/business/services/alerts" style="background: white; color: #4a90e2; padding: 12px 24px; border-radius: 6px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-bell"></i> View Active Alerts
+                </a>
+                <a href="/weather-detailed" style="background: transparent; color: white; padding: 12px 24px; border-radius: 6px; font-weight: 500; text-decoration: none; border: 2px solid white; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-thermometer-half"></i> Current Conditions
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Protocols Section -->
+    <section class="emergency-protocols" style="padding: 80px 20px; background: #f5f7fa;">
+        <div style="max-width: 1200px; margin: auto;">
+            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px; color: #2c3e50; font-weight: 300;">Emergency Protocols</h2>
+            <p style="text-align: center; font-size: 1.1rem; margin-bottom: 60px; color: #7f8c8d; max-width: 600px; margin-left: auto; margin-right: auto; font-weight: 300;">
+                Quick reference guides for different weather emergencies to ensure the safety of your team and operations.
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
+                <!-- Severe Thunderstorms -->
+                <div style="background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: transform 0.2s ease;">
+                    <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                        <div style="background: #f39c12; color: white; padding: 12px; border-radius: 50%; margin-right: 15px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-bolt" style="font-size: 1.2rem;"></i>
+                        </div>
+                        <h3 style="font-size: 1.3rem; margin: 0; color: #2c3e50; font-weight: 500;">Severe Thunderstorms</h3>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #5a6c7d;">
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Move all personnel indoors immediately</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Avoid windows and metal objects</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Unplug electrical equipment</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Monitor weather alerts continuously</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- High Winds -->
+                <div style="background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: transform 0.2s ease;">
+                    <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                        <div style="background: #4a90e2; color: white; padding: 12px; border-radius: 50%; margin-right: 15px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-wind" style="font-size: 1.2rem;"></i>
+                        </div>
+                        <h3 style="font-size: 1.3rem; margin: 0; color: #2c3e50; font-weight: 500;">High Winds</h3>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #5a6c7d;">
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Secure all outdoor equipment and signage</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Close and lock all windows and doors</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Avoid driving high-profile vehicles</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Stay away from trees and power lines</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Heavy Snow/Ice -->
+                <div style="background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: transform 0.2s ease;">
+                    <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                        <div style="background: #9b59b6; color: white; padding: 12px; border-radius: 50%; margin-right: 15px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-snowflake" style="font-size: 1.2rem;"></i>
+                        </div>
+                        <h3 style="font-size: 1.3rem; margin: 0; color: #2c3e50; font-weight: 500;">Heavy Snow/Ice</h3>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #5a6c7d;">
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Implement remote work policies</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Clear walkways and parking areas</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Check heating systems regularly</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Maintain emergency supply kits</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Extreme Heat -->
+                <div style="background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: transform 0.2s ease;">
+                    <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                        <div style="background: #e67e22; color: white; padding: 12px; border-radius: 50%; margin-right: 15px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-sun" style="font-size: 1.2rem;"></i>
+                        </div>
+                        <h3 style="font-size: 1.3rem; margin: 0; color: #2c3e50; font-weight: 500;">Extreme Heat</h3>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #5a6c7d;">
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Increase air conditioning usage</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Provide extra water for employees</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Limit outdoor work activities</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Monitor employees for heat exhaustion</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Flooding -->
+                <div style="background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: transform 0.2s ease;">
+                    <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                        <div style="background: #3498db; color: white; padding: 12px; border-radius: 50%; margin-right: 15px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-water" style="font-size: 1.2rem;"></i>
+                        </div>
+                        <h3 style="font-size: 1.3rem; margin: 0; color: #2c3e50; font-weight: 500;">Flooding</h3>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #5a6c7d;">
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Move equipment to higher ground</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Turn off electricity in affected areas</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Evacuate lower levels if necessary</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Document damage for insurance</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Tornadoes -->
+                <div style="background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: transform 0.2s ease;">
+                    <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                        <div style="background: #e74c3c; color: white; padding: 12px; border-radius: 50%; margin-right: 15px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-tornado" style="font-size: 1.2rem;"></i>
+                        </div>
+                        <h3 style="font-size: 1.3rem; margin: 0; color: #2c3e50; font-weight: 500;">Tornadoes</h3>
+                    </div>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #5a6c7d;">
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Move to lowest floor interior room</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Stay away from windows and doors</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Cover head and neck with hands</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; font-size: 0.95rem;">
+                            <i class="fas fa-check" style="color: #50c878; margin-right: 12px; margin-top: 2px; font-size: 0.8rem;"></i>
+                            <span>Wait for all-clear signal</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Contacts Section -->
+    <section class="emergency-contacts" style="padding: 80px 20px; background: white;">
+        <div style="max-width: 1000px; margin: auto;">
+            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px; color: #2c3e50; font-weight: 300;">Emergency Contacts</h2>
+            <p style="text-align: center; font-size: 1.1rem; margin-bottom: 60px; color: #7f8c8d; font-weight: 300;">
+                Keep these important numbers readily available for weather-related emergencies.
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                <div style="background: white; border-radius: 8px; padding: 30px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                    <i class="fas fa-phone-alt" style="font-size: 2.5rem; color: #e74c3c; margin-bottom: 20px;"></i>
+                    <h3 style="font-size: 1.3rem; margin-bottom: 10px; color: #2c3e50; font-weight: 500;">Emergency Services</h3>
+                    <p style="font-size: 1.5rem; font-weight: 600; color: #e74c3c; margin: 0;">911</p>
+                </div>
+
+                <div style="background: white; border-radius: 8px; padding: 30px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                    <i class="fas fa-broadcast-tower" style="font-size: 2.5rem; color: #4a90e2; margin-bottom: 20px;"></i>
+                    <h3 style="font-size: 1.3rem; margin-bottom: 10px; color: #2c3e50; font-weight: 500;">National Weather Service</h3>
+                    <p style="font-size: 1.2rem; font-weight: 600; color: #4a90e2; margin: 0;">1-800-WEATHER</p>
+                </div>
+
+                <div style="background: white; border-radius: 8px; padding: 30px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                    <i class="fas fa-bolt" style="font-size: 2.5rem; color: #f39c12; margin-bottom: 20px;"></i>
+                    <h3 style="font-size: 1.3rem; margin-bottom: 10px; color: #2c3e50; font-weight: 500;">Power Company</h3>
+                    <p style="font-size: 1.2rem; font-weight: 600; color: #f39c12; margin: 0;">Report Outages</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Safety Resources Section -->
+    <section class="safety-resources" style="padding: 80px 20px; background: #f5f7fa;">
+        <div style="max-width: 1000px; margin: auto; text-align: center;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px; color: #2c3e50; font-weight: 300;">Safety Resources</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 50px; color: #7f8c8d; font-weight: 300;">
+                Additional tools and resources to help keep your business prepared.
+            </p>
+
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <a href="/business/services/alerts" style="background: #4a90e2; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-bell"></i>
+                    Weather Alerts
+                </a>
+                <a href="/weather-detailed" style="background: #50c878; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-thermometer-half"></i>
+                    Live Weather
+                </a>
+                <a href="/business/dashboard" style="background: #f39c12; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+                <a href="/business/services/api" style="background: #9b59b6; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-code"></i>
+                    API Docs
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

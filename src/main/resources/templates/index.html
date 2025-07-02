@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/weather-styles.css}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" th:href="@{/Images/skysenseicon.png}">
     <style>
         /* Navigation styles */
         .top-navigation {
@@ -34,9 +35,9 @@
             text-decoration: none;
         }
 
-        .nav-brand i {
-            font-size: 1.5rem;
-            color: #3498db;
+        .nav-brand img {
+            height: 30px;
+            width: 30px;
         }
 
         .nav-links {
@@ -168,7 +169,7 @@
 <!-- Top Navigation -->
 <nav class="top-navigation">
     <a href="/weather-detailed" class="nav-brand">
-        <i class="fas fa-cloud-sun"></i>
+        <img th:src="@{/Images/skysenseicon.png}" alt="SkySense Logo">
         <span>SkySense</span>
     </a>
 
@@ -187,6 +188,8 @@
         </a>
     </div>
 </nav>
+
+<!-- Rest of the file remains the same -->
 
 <!-- Sidebar -->
 <div id="sidebar" class="sidebar">

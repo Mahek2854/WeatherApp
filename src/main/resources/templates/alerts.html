@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout :: layout}">
+
+<head>
+    <title th:text="${pageTitle} ?: 'Weather Alerts - WeatherPro Business'">Weather Alerts - WeatherPro Business</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <!-- Hero Section - Matching the gradient theme -->
+    <section class="hero-section" style="padding: 80px 20px 60px; background: linear-gradient(135deg, #4a90e2, #50c878); color: white;">
+        <div style="max-width: 1100px; margin: auto; text-align: center;">
+            <div style="margin-bottom: 20px;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.9;"></i>
+            </div>
+            <h1 style="font-size: 3rem; margin-bottom: 15px; font-weight: 300; letter-spacing: -1px;">Weather Alerts & Warnings</h1>
+            <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.95; font-weight: 300; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Stay informed with real-time weather alerts and severe weather warnings to protect your business operations.
+            </p>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="/business/safety" style="background: white; color: #4a90e2; padding: 12px 24px; border-radius: 6px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-shield-alt"></i> Safety Guidelines
+                </a>
+                <a href="/weather-detailed" style="background: transparent; color: white; padding: 12px 24px; border-radius: 6px; font-weight: 500; text-decoration: none; border: 2px solid white; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-thermometer-half"></i> Current Weather
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Active Alerts Section -->
+    <section class="active-alerts" style="padding: 80px 20px; background: #f5f7fa;">
+        <div style="max-width: 1200px; margin: auto;">
+            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px; color: #2c3e50; font-weight: 300;">Active Weather Alerts</h2>
+            <p style="text-align: center; font-size: 1.1rem; margin-bottom: 60px; color: #7f8c8d; max-width: 600px; margin-left: auto; margin-right: auto; font-weight: 300;">
+                Current weather warnings and watches in effect. Click on any alert for detailed information and safety recommendations.
+            </p>
+
+            <!-- Sample Active Alerts -->
+            <div style="display: flex; flex-direction: column; gap: 25px;">
+                <!-- Severe Alert -->
+                <div style="background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 4px solid #e74c3c;">
+                    <div style="display: flex; align-items: flex-start; gap: 20px;">
+                        <div style="background: #e74c3c; color: white; padding: 12px; border-radius: 50%; min-width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-bolt" style="font-size: 1.2rem;"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                                <h3 style="font-size: 1.4rem; margin: 0; color: #2c3e50; font-weight: 500;">Severe Thunderstorm Warning</h3>
+                                <span style="background: #e74c3c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">ACTIVE</span>
+                            </div>
+                            <p style="color: #7f8c8d; margin-bottom: 15px; font-size: 0.9rem;">
+                                <i class="fas fa-map-marker-alt"></i> New York County, NY •
+                                <i class="fas fa-clock"></i> Until 8:00 PM EST
+                            </p>
+                            <p style="color: #5a6c7d; margin-bottom: 20px; line-height: 1.6;">
+                                Severe thunderstorms with damaging winds up to 70 mph and quarter-size hail possible.
+                                Heavy rainfall may cause localized flooding. Seek shelter immediately.
+                            </p>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <span style="background: #f5f7fa; color: #2c3e50; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
+                                    <i class="fas fa-wind"></i> 70 mph winds
+                                </span>
+                                <span style="background: #f5f7fa; color: #2c3e50; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
+                                    <i class="fas fa-cloud-rain"></i> Heavy rain
+                                </span>
+                                <span style="background: #f5f7fa; color: #2c3e50; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
+                                    <i class="fas fa-circle"></i> Quarter-size hail
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Moderate Alert -->
+                <div style="background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 4px solid #f39c12;">
+                    <div style="display: flex; align-items: flex-start; gap: 20px;">
+                        <div style="background: #f39c12; color: white; padding: 12px; border-radius: 50%; min-width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-wind" style="font-size: 1.2rem;"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                                <h3 style="font-size: 1.4rem; margin: 0; color: #2c3e50; font-weight: 500;">High Wind Advisory</h3>
+                                <span style="background: #f39c12; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">WATCH</span>
+                            </div>
+                            <p style="color: #7f8c8d; margin-bottom: 15px; font-size: 0.9rem;">
+                                <i class="fas fa-map-marker-alt"></i> Manhattan, NY •
+                                <i class="fas fa-clock"></i> 6:00 PM - 11:00 PM EST
+                            </p>
+                            <p style="color: #5a6c7d; margin-bottom: 20px; line-height: 1.6;">
+                                Sustained winds of 25-35 mph with gusts up to 50 mph expected.
+                                Secure outdoor objects and use caution when driving high-profile vehicles.
+                            </p>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <span style="background: #f5f7fa; color: #2c3e50; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
+                                    <i class="fas fa-wind"></i> 35 mph sustained
+                                </span>
+                                <span style="background: #f5f7fa; color: #2c3e50; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
+                                    <i class="fas fa-arrow-up"></i> 50 mph gusts
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Minor Alert -->
+                <div style="background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 4px solid #4a90e2;">
+                    <div style="display: flex; align-items: flex-start; gap: 20px;">
+                        <div style="background: #4a90e2; color: white; padding: 12px; border-radius: 50%; min-width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-cloud-rain" style="font-size: 1.2rem;"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                                <h3 style="font-size: 1.4rem; margin: 0; color: #2c3e50; font-weight: 500;">Flood Watch</h3>
+                                <span style="background: #4a90e2; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">MONITOR</span>
+                            </div>
+                            <p style="color: #7f8c8d; margin-bottom: 15px; font-size: 0.9rem;">
+                                <i class="fas fa-map-marker-alt"></i> Brooklyn, NY •
+                                <i class="fas fa-clock"></i> Tonight through Tomorrow Morning
+                            </p>
+                            <p style="color: #5a6c7d; margin-bottom: 20px; line-height: 1.6;">
+                                Heavy rainfall may cause flooding in low-lying and poor drainage areas.
+                                Monitor conditions and avoid driving through flooded roads.
+                            </p>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <span style="background: #f5f7fa; color: #2c3e50; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
+                                    <i class="fas fa-cloud-rain"></i> Heavy rainfall
+                                </span>
+                                <span style="background: #f5f7fa; color: #2c3e50; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
+                                    <i class="fas fa-water"></i> Possible flooding
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No Active Alerts State -->
+            <div id="no-alerts" style="display: none; text-align: center; padding: 60px 20px;">
+                <i class="fas fa-check-circle" style="font-size: 4rem; color: #50c878; margin-bottom: 20px;"></i>
+                <h3 style="font-size: 1.8rem; margin-bottom: 15px; color: #2c3e50; font-weight: 300;">No Active Weather Alerts</h3>
+                <p style="color: #7f8c8d; font-size: 1.1rem; font-weight: 300;">
+                    There are currently no weather warnings or watches in effect for your area.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Alert Types Section -->
+    <section class="alert-types" style="padding: 80px 20px; background: white;">
+        <div style="max-width: 1200px; margin: auto;">
+            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px; color: #2c3e50; font-weight: 300;">Understanding Alert Types</h2>
+            <p style="text-align: center; font-size: 1.1rem; margin-bottom: 60px; color: #7f8c8d; max-width: 600px; margin-left: auto; margin-right: auto; font-weight: 300;">
+                Learn about different types of weather alerts and their severity levels to make informed decisions.
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                <!-- Warning -->
+                <div style="background: white; border-radius: 8px; padding: 30px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 2px solid #e74c3c;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #e74c3c; margin-bottom: 20px;"></i>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px; color: #2c3e50; font-weight: 500;">WARNING</h3>
+                    <p style="color: #5a6c7d; line-height: 1.6; margin-bottom: 20px;">
+                        Hazardous weather is occurring, imminent, or likely. Take immediate action to protect life and property.
+                    </p>
+                    <div style="background: #e74c3c; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 600;">
+                        IMMEDIATE ACTION REQUIRED
+                    </div>
+                </div>
+
+                <!-- Watch -->
+                <div style="background: white; border-radius: 8px; padding: 30px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 2px solid #f39c12;">
+                    <i class="fas fa-eye" style="font-size: 3rem; color: #f39c12; margin-bottom: 20px;"></i>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px; color: #2c3e50; font-weight: 500;">WATCH</h3>
+                    <p style="color: #5a6c7d; line-height: 1.6; margin-bottom: 20px;">
+                        Conditions are favorable for hazardous weather. Stay alert and be prepared to take action.
+                    </p>
+                    <div style="background: #f39c12; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 600;">
+                        STAY ALERT & PREPARED
+                    </div>
+                </div>
+
+                <!-- Advisory -->
+                <div style="background: white; border-radius: 8px; padding: 30px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 2px solid #4a90e2;">
+                    <i class="fas fa-info-circle" style="font-size: 3rem; color: #4a90e2; margin-bottom: 20px;"></i>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 15px; color: #2c3e50; font-weight: 500;">ADVISORY</h3>
+                    <p style="color: #5a6c7d; line-height: 1.6; margin-bottom: 20px;">
+                        Weather conditions may cause inconvenience and could be hazardous. Exercise caution.
+                    </p>
+                    <div style="background: #4a90e2; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 600;">
+                        EXERCISE CAUTION
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Notification Settings Section -->
+    <section class="notification-settings" style="padding: 80px 20px; background: #f5f7fa;">
+        <div style="max-width: 800px; margin: auto; text-align: center;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px; color: #2c3e50; font-weight: 300;">Alert Notification Settings</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 50px; color: #7f8c8d; font-weight: 300;">
+                Customize how you receive weather alerts to stay informed without being overwhelmed.
+            </p>
+
+            <div style="background: white; border-radius: 8px; padding: 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; text-align: left;">
+                    <div class="setting-option">
+                        <h4 style="font-size: 1.2rem; margin-bottom: 15px; color: #2c3e50; display: flex; align-items: center; gap: 10px; font-weight: 500;">
+                            <i class="fas fa-envelope" style="color: #4a90e2;"></i>
+                            Email Alerts
+                        </h4>
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: #5a6c7d;">
+                            <input type="checkbox" checked style="transform: scale(1.2);">
+                            <span>Receive email notifications for severe weather alerts</span>
+                        </label>
+                    </div>
+
+                    <div class="setting-option">
+                        <h4 style="font-size: 1.2rem; margin-bottom: 15px; color: #2c3e50; display: flex; align-items: center; gap: 10px; font-weight: 500;">
+                            <i class="fas fa-mobile-alt" style="color: #50c878;"></i>
+                            SMS Alerts
+                        </h4>
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: #5a6c7d;">
+                            <input type="checkbox" checked style="transform: scale(1.2);">
+                            <span>Receive text messages for urgent weather warnings</span>
+                        </label>
+                    </div>
+
+                    <div class="setting-option">
+                        <h4 style="font-size: 1.2rem; margin-bottom: 15px; color: #2c3e50; display: flex; align-items: center; gap: 10px; font-weight: 500;">
+                            <i class="fas fa-desktop" style="color: #9b59b6;"></i>
+                            Push Notifications
+                        </h4>
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: #5a6c7d;">
+                            <input type="checkbox" style="transform: scale(1.2);">
+                            <span>Enable browser push notifications</span>
+                        </label>
+                    </div>
+
+                    <div class="setting-option">
+                        <h4 style="font-size: 1.2rem; margin-bottom: 15px; color: #2c3e50; display: flex; align-items: center; gap: 10px; font-weight: 500;">
+                            <i class="fas fa-phone" style="color: #e74c3c;"></i>
+                            Voice Calls
+                        </h4>
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: #5a6c7d;">
+                            <input type="checkbox" style="transform: scale(1.2);">
+                            <span>Receive voice calls for extreme weather events</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <button style="background: #4a90e2; color: white; padding: 12px 30px; border: none; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer;">
+                        Save Notification Preferences
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions Section -->
+    <section class="quick-actions" style="padding: 80px 20px; background: white;">
+        <div style="max-width: 1000px; margin: auto; text-align: center;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px; color: #2c3e50; font-weight: 300;">Quick Actions</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 50px; color: #7f8c8d; font-weight: 300;">
+                Access important weather information and safety resources quickly.
+            </p>
+
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                <a href="/business/safety" style="background: #e74c3c; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-shield-alt"></i>
+                    Safety Guidelines
+                </a>
+                <a href="/weather-detailed" style="background: #4a90e2; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-thermometer-half"></i>
+                    Current Weather
+                </a>
+                <a href="/business/dashboard" style="background: #50c878; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Weather Dashboard
+                </a>
+                <a href="/business/services/api" style="background: #9b59b6; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-code"></i>
+                    API Integration
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Simulate real-time alert updates
+        setInterval(function() {
+            updateAlertTimestamps();
+        }, 60000); // Update every minute
+
+        // Add click handlers for alert cards
+        document.querySelectorAll('.alert-card').forEach(card => {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', function() {
+                // Add visual feedback
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+    });
+
+    function updateAlertTimestamps() {
+        // This would typically fetch real alert data from your API
+        console.log('Updating alert timestamps...');
+    }
+</script>
+</body>
+</html>

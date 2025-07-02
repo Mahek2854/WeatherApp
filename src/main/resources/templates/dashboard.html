@@ -2,15 +2,886 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="layout :: layout">
+      layout:decorate="~{layout :: layout}">
 
 <head>
-    <title th:text="${pageTitle}">Dashboard</title>
+    <title th:text="${pageTitle} ?: 'Weather Dashboard - WeatherPro Business'">Weather Dashboard - WeatherPro Business</title>
+    <style>
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #4a90e2, #50c878);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .location-selector {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .location-input {
+            padding: 12px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #2c3e50;
+            font-size: 1rem;
+            min-width: 250px;
+            outline: none;
+        }
+
+        .location-input:focus {
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+        }
+
+        .search-btn, .location-btn {
+            padding: 12px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-btn:hover, .location-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .popular-locations {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .popular-locations button {
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .popular-locations button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f5f7fa;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .weather-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .weather-main {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .weather-icon {
+            width: 80px;
+            height: 80px;
+        }
+
+        .temperature {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .weather-details {
+            text-align: right;
+        }
+
+        .location-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #4a90e2;
+            margin-bottom: 5px;
+        }
+
+        .weather-desc {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .metric-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4a90e2;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4a90e2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .update-time {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+
+        .refresh-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .commute-option {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4a90e2;
+        }
+
+        .commute-time {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .time-slot {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .weather-risk {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .risk-low { background: #d4edda; color: #155724; }
+        .risk-medium { background: #fff3cd; color: #856404; }
+        .risk-high { background: #f8d7da; color: #721c24; }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+            margin: 20px 0;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #50c878;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .weather-display {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .weather-details {
+                text-align: center;
+                margin-top: 15px;
+            }
+
+            .search-container {
+                flex-direction: column;
+            }
+
+            .location-input {
+                min-width: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body>
 <div layout:fragment="content">
-    <h1 style="text-align: center; margin-top: 40px;">✅ Dashboard is loading correctly!</h1>
+    <div class="dashboard-container">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <h1 style="margin: 0 0 10px 0; font-size: 2.5rem; font-weight: 300;">Weather Dashboard</h1>
+            <p style="margin: 0; font-size: 1.1rem; opacity: 0.9;">Travel & Commute Optimization Center</p>
+
+            <!-- Location Selector -->
+            <div class="location-selector">
+                <div class="search-container">
+                    <input type="text" id="locationInput" class="location-input" placeholder="Enter city name (e.g., New York, London, Tokyo)">
+                    <button class="search-btn" onclick="searchLocation()">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                    <button class="location-btn" onclick="useCurrentLocation()">
+                        <i class="fas fa-location-arrow"></i> Use My Location
+                    </button>
+                </div>
+
+                <div class="popular-locations">
+                    <button onclick="selectLocation('New York', 'US')">New York</button>
+                    <button onclick="selectLocation('London', 'GB')">London</button>
+                    <button onclick="selectLocation('Tokyo', 'JP')">Tokyo</button>
+                    <button onclick="selectLocation('Paris', 'FR')">Paris</button>
+                    <button onclick="selectLocation('Sydney', 'AU')">Sydney</button>
+                    <button onclick="selectLocation('Dubai', 'AE')">Dubai</button>
+                </div>
+
+                <div class="update-time">
+                    <span id="lastUpdate">Select a location to view weather data</span>
+                    <button class="refresh-btn" onclick="refreshDashboard()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Messages -->
+        <div id="statusMessages"></div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Current Weather Card -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: #4a90e2;">
+                        <i class="fas fa-thermometer-half"></i>
+                    </div>
+                    <h3 class="card-title">Current Weather</h3>
+                </div>
+
+                <div class="weather-display">
+                    <div class="weather-main">
+                        <img id="weatherIcon" src="https://openweathermap.org/img/wn/01d@2x.png" alt="Weather" class="weather-icon">
+                        <div class="temperature" id="currentTemp">--°</div>
+                    </div>
+                    <div class="weather-details">
+                        <div class="location-name" id="currentLocation">Select a location</div>
+                        <div class="weather-desc" id="weatherDesc">No location selected</div>
+                        <div style="margin-top: 10px; font-size: 0.9rem; color: #5a6c7d;">
+                            Feels like <span id="feelsLike">--°</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-value" id="humidity">--%</div>
+                        <div class="metric-label">Humidity</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="windSpeed">-- mph</div>
+                        <div class="metric-label">Wind</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="visibility">-- mi</div>
+                        <div class="metric-label">Visibility</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="pressure">-- mb</div>
+                        <div class="metric-label">Pressure</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Best Time to Leave Card -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: #50c878;">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h3 class="card-title">Best Time to Leave</h3>
+                </div>
+
+                <div id="commuteOptions">
+                    <div style="text-align: center; color: #7f8c8d; padding: 40px;">
+                        <i class="fas fa-map-marker-alt" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                        <p>Select a location to see commute recommendations</p>
+                    </div>
+                </div>
+
+                <div id="commuteRecommendation" style="margin-top: 20px; padding: 15px; background: #e8f4fd; border-radius: 8px; border-left: 4px solid #4a90e2; display: none;">
+                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 5px;">
+                        <i class="fas fa-lightbulb"></i> Recommendation
+                    </div>
+                    <div style="font-size: 0.9rem; color: #5a6c7d;" id="recommendationText">
+                        Select a location to get recommendations
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hourly Forecast Card -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: #9b59b6;">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="card-title">Hourly Forecast</h3>
+                </div>
+
+                <div id="hourlyForecast" style="display: flex; gap: 15px; overflow-x: auto; padding: 10px 0; min-height: 120px; align-items: center; justify-content: center;">
+                    <div style="text-align: center; color: #7f8c8d;">
+                        <i class="fas fa-clock" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                        <p>Select a location to view hourly forecast</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Travel Alerts Card -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-icon" style="background: #e74c3c;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="card-title">Travel Alerts</h3>
+                </div>
+
+                <div id="travelAlerts">
+                    <div style="text-align: center; color: #7f8c8d; padding: 40px;">
+                        <i class="fas fa-info-circle" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                        <p>Weather-based travel alerts will appear here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLocation = null;
+        let selectedCity = null;
+        let selectedCountry = null;
+
+        // Initialize dashboard when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSavedLocation();
+
+            // Add enter key support for location input
+            document.getElementById('locationInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchLocation();
+                }
+            });
+        });
+
+        function loadSavedLocation() {
+            const saved = localStorage.getItem('selectedLocation');
+            if (saved) {
+                const location = JSON.parse(saved);
+                selectLocation(location.city, location.country);
+            }
+        }
+
+        function saveSelectedLocation(city, country) {
+            localStorage.setItem('selectedLocation', JSON.stringify({
+                city: city,
+                country: country,
+                timestamp: Date.now()
+            }));
+        }
+
+        async function searchLocation() {
+            const input = document.getElementById('locationInput').value.trim();
+            if (!input) {
+                showMessage('Please enter a city name', 'error');
+                return;
+            }
+
+            showMessage('Searching for location...', 'info');
+
+            // Parse input (handle "City, Country" format)
+            const parts = input.split(',');
+            const city = parts[0].trim();
+            const country = parts[1] ? parts[1].trim() : '';
+
+            await selectLocation(city, country);
+        }
+
+        async function selectLocation(city, country = '') {
+            selectedCity = city;
+            selectedCountry = country;
+
+            showMessage(`Loading weather data for ${city}...`, 'info');
+
+            try {
+                await loadWeatherData(city, country);
+                await loadForecastData(city, country);
+                generateCommuteRecommendations();
+                generateTravelAlerts();
+                updateLastUpdateTime();
+                saveSelectedLocation(city, country);
+
+                // Clear the input
+                document.getElementById('locationInput').value = '';
+
+                showMessage(`Weather data loaded for ${city}`, 'success');
+
+            } catch (error) {
+                console.error('Error loading location data:', error);
+                showMessage(`Unable to load weather data for ${city}. Please try another location.`, 'error');
+            }
+        }
+
+        async function useCurrentLocation() {
+            showMessage('Detecting your location...', 'info');
+
+            if (!navigator.geolocation) {
+                showMessage('Geolocation is not supported by your browser', 'error');
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    currentLocation = {
+                        lat: position.coords.latitude,
+                        lon: position.coords.longitude
+                    };
+
+                    try {
+                        await loadWeatherDataByCoords(currentLocation.lat, currentLocation.lon);
+                        await loadForecastDataByCoords(currentLocation.lat, currentLocation.lon);
+                        generateCommuteRecommendations();
+                        generateTravelAlerts();
+                        updateLastUpdateTime();
+
+                        showMessage('Weather data loaded for your current location', 'success');
+
+                    } catch (error) {
+                        console.error('Error loading current location weather:', error);
+                        showMessage('Unable to load weather data for your location', 'error');
+                    }
+                },
+                (error) => {
+                    console.error('Geolocation error:', error);
+                    showMessage('Unable to access your location. Please search for a city instead.', 'error');
+                }
+            );
+        }
+
+        async function loadWeatherData(city, country) {
+            const params = new URLSearchParams();
+            params.append('city', city);
+            if (country) params.append('country', country);
+
+            const response = await fetch(`/business/api/weather/current?${params}`);
+            const result = await response.json();
+
+            if (result.success && result.data) {
+                updateWeatherDisplay(result.data);
+            } else {
+                throw new Error(result.error || 'Weather data not available');
+            }
+        }
+
+        async function loadWeatherDataByCoords(lat, lon) {
+            const params = new URLSearchParams();
+            params.append('lat', lat.toString());
+            params.append('lon', lon.toString());
+
+            const response = await fetch(`/business/api/weather/current?${params}`);
+            const result = await response.json();
+
+            if (result.success && result.data) {
+                updateWeatherDisplay(result.data);
+            } else {
+                throw new Error(result.error || 'Weather data not available');
+            }
+        }
+
+        async function loadForecastData(city, country) {
+            const params = new URLSearchParams();
+            params.append('city', city);
+            if (country) params.append('country', country);
+
+            const response = await fetch(`/business/api/weather/forecast?${params}`);
+            const result = await response.json();
+
+            if (result.success && result.data) {
+                updateHourlyForecast(result.data.hourly);
+            }
+        }
+
+        async function loadForecastDataByCoords(lat, lon) {
+            const params = new URLSearchParams();
+            params.append('lat', lat.toString());
+            params.append('lon', lon.toString());
+
+            const response = await fetch(`/business/api/weather/forecast?${params}`);
+            const result = await response.json();
+
+            if (result.success && result.data) {
+                updateHourlyForecast(result.data.hourly);
+            }
+        }
+
+        function updateWeatherDisplay(data) {
+            // Update location name
+            const locationText = data.country ? `${data.city}, ${data.country}` : data.city;
+            document.getElementById('currentLocation').textContent = locationText;
+
+            // Update temperature (convert from Celsius to Fahrenheit if needed)
+            const tempF = data.temperature ? Math.round(data.temperature * 9/5 + 32) : '--';
+            const feelsLikeF = data.feelsLike ? Math.round(data.feelsLike * 9/5 + 32) : '--';
+
+            document.getElementById('currentTemp').textContent = tempF + '°F';
+            document.getElementById('feelsLike').textContent = feelsLikeF + '°F';
+            document.getElementById('weatherDesc').textContent = data.description || 'No description available';
+
+            // Update weather icon
+            if (data.weatherIcon) {
+                document.getElementById('weatherIcon').src = `https://openweathermap.org/img/wn/${data.weatherIcon}@2x.png`;
+            }
+
+            // Update metrics
+            document.getElementById('humidity').textContent = (data.humidity || '--') + '%';
+            document.getElementById('windSpeed').textContent = (data.windSpeed ? Math.round(data.windSpeed * 2.237) : '--') + ' mph';
+            document.getElementById('visibility').textContent = (data.visibility ? Math.round(data.visibility * 0.621371) : '--') + ' mi';
+            document.getElementById('pressure').textContent = (data.pressure || '--') + ' mb';
+        }
+
+        function updateHourlyForecast(hourlyData) {
+            const container = document.getElementById('hourlyForecast');
+            container.innerHTML = '';
+
+            if (!hourlyData || hourlyData.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: #7f8c8d; width: 100%;">
+                        <i class="fas fa-clock" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                        <p>Hourly forecast not available</p>
+                    </div>
+                `;
+                return;
+            }
+
+            hourlyData.forEach(hour => {
+                const hourItem = document.createElement('div');
+                hourItem.style.cssText = 'min-width: 80px; text-align: center; padding: 10px; background: #f8f9fa; border-radius: 8px;';
+                hourItem.innerHTML = `
+                    <div style="font-size: 0.8rem; color: #7f8c8d; margin-bottom: 8px;">${hour.time}</div>
+                    <img src="https://openweathermap.org/img/wn/${hour.icon}.png" alt="Weather" style="width: 40px; height: 40px; margin-bottom: 8px;">
+                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 5px;">${hour.temp}°</div>
+                    <div style="font-size: 0.7rem; color: #4a90e2;">${hour.precipitation}%</div>
+                `;
+                container.appendChild(hourItem);
+            });
+        }
+
+        async function generateCommuteRecommendations() {
+            if (!selectedCity && !currentLocation) return;
+
+            try {
+                let params = new URLSearchParams();
+
+                if (currentLocation) {
+                    params.append('lat', currentLocation.lat.toString());
+                    params.append('lon', currentLocation.lon.toString());
+                } else if (selectedCity) {
+                    params.append('city', selectedCity);
+                    if (selectedCountry) params.append('country', selectedCountry);
+                }
+
+                const response = await fetch(`/business/api/commute/recommendations?${params}`);
+                const result = await response.json();
+
+                if (result.success && result.recommendations) {
+                    displayCommuteRecommendations(result.recommendations, result.bestTime);
+                } else {
+                    displayDefaultRecommendations();
+                }
+            } catch (error) {
+                console.error('Error loading commute recommendations:', error);
+                displayDefaultRecommendations();
+            }
+        }
+
+        function displayCommuteRecommendations(recommendations, bestTime) {
+            const container = document.getElementById('commuteOptions');
+            container.innerHTML = '';
+
+            // Show top 3 recommendations
+            recommendations.slice(0, 3).forEach(rec => {
+                const option = document.createElement('div');
+                option.className = 'commute-option';
+                option.innerHTML = `
+                    <div class="commute-time">
+                        <span class="time-slot">${rec.timeSlot}</span>
+                        <span class="weather-risk risk-${rec.riskLevel}">
+                            ${rec.riskLevel.charAt(0).toUpperCase() + rec.riskLevel.slice(1)} Risk
+                        </span>
+                    </div>
+                    <div style="font-size: 0.9rem; color: #5a6c7d; margin-bottom: 8px;">
+                        Score: ${Math.round(rec.score)}/100
+                    </div>
+                    <div style="font-size: 0.85rem; color: #7f8c8d;">
+                        ${rec.description}
+                    </div>
+                `;
+                container.appendChild(option);
+            });
+
+            // Show best recommendation
+            if (bestTime) {
+                document.getElementById('commuteRecommendation').style.display = 'block';
+                document.getElementById('recommendationText').textContent =
+                    `Best time: ${bestTime.timeSlot} (Score: ${Math.round(bestTime.score)}/100)`;
+            }
+        }
+
+        function displayDefaultRecommendations() {
+            // Fallback to original static recommendations
+            const recommendations = [
+                {
+                    timeSlot: '7:00 AM - 7:30 AM',
+                    riskLevel: 'low',
+                    description: 'Clear conditions expected, optimal travel time'
+                },
+                {
+                    timeSlot: '8:00 AM - 8:30 AM',
+                    riskLevel: 'medium',
+                    description: 'Moderate traffic, check weather updates'
+                },
+                {
+                    timeSlot: '9:00 AM - 9:30 AM',
+                    riskLevel: 'high',
+                    description: 'Peak traffic, weather may impact travel'
+                }
+            ];
+
+            displayCommuteRecommendations(recommendations, recommendations[0]);
+        }
+
+        function generateTravelAlerts() {
+            const container = document.getElementById('travelAlerts');
+
+            // Generate weather-based alerts
+            const alerts = [
+                {
+                    type: 'info',
+                    icon: 'info-circle',
+                    title: 'Weather Update',
+                    message: 'Current conditions are favorable for travel',
+                    color: '#50c878'
+                }
+            ];
+
+            container.innerHTML = '';
+
+            alerts.forEach(alert => {
+                const alertDiv = document.createElement('div');
+                alertDiv.style.cssText = `padding: 15px; background: ${alert.color === '#50c878' ? '#d4edda' : '#fff3cd'}; border-radius: 8px; border-left: 4px solid ${alert.color}; margin-bottom: 15px;`;
+                alertDiv.innerHTML = `
+                    <div style="font-weight: 600; color: ${alert.color === '#50c878' ? '#155724' : '#856404'}; margin-bottom: 5px;">
+                        <i class="fas fa-${alert.icon}"></i> ${alert.title}
+                    </div>
+                    <div style="font-size: 0.9rem; color: ${alert.color === '#50c878' ? '#155724' : '#856404'};">
+                        ${alert.message}
+                    </div>
+                `;
+                container.appendChild(alertDiv);
+            });
+        }
+
+        function refreshDashboard() {
+            if (selectedCity) {
+                selectLocation(selectedCity, selectedCountry);
+            } else if (currentLocation) {
+                useCurrentLocation();
+            } else {
+                showMessage('Please select a location first', 'error');
+            }
+        }
+
+        function updateLastUpdateTime() {
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent =
+                `Last updated: ${now.toLocaleTimeString()}`;
+        }
+
+        function showMessage(message, type = 'info') {
+            const container = document.getElementById('statusMessages');
+
+            // Remove existing messages
+            container.innerHTML = '';
+
+            if (type === 'info' && message.includes('Loading')) {
+                // Don't show loading messages as persistent notifications
+                return;
+            }
+
+            const messageDiv = document.createElement('div');
+            let bgColor, textColor, borderColor, icon;
+
+            switch (type) {
+                case 'success':
+                    bgColor = '#d4edda';
+                    textColor = '#155724';
+                    borderColor = '#50c878';
+                    icon = 'check-circle';
+                    break;
+                case 'error':
+                    bgColor = '#f8d7da';
+                    textColor = '#721c24';
+                    borderColor = '#e74c3c';
+                    icon = 'exclamation-triangle';
+                    break;
+                default:
+                    bgColor = '#d1ecf1';
+                    textColor = '#0c5460';
+                    borderColor = '#4a90e2';
+                    icon = 'info-circle';
+            }
+
+            messageDiv.className = type === 'success' ? 'success-message' : 'error-message';
+            messageDiv.innerHTML = `
+                <div style="font-weight: 600; margin-bottom: 5px;">
+                    <i class="fas fa-${icon}"></i> ${type.charAt(0).toUpperCase() + type.slice(1)}
+                </div>
+                <div style="font-size: 0.9rem;">${message}</div>
+            `;
+
+            container.appendChild(messageDiv);
+
+            // Auto-remove success messages after 3 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.parentNode.removeChild(messageDiv);
+                    }
+                }, 3000);
+            }
+        }
+    </script>
 </div>
 </body>
 </html>

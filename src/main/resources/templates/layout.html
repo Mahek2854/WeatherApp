@@ -8,6 +8,7 @@
     <title th:text="${pageTitle} ?: 'WeatherPro Business'">WeatherPro Business</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/css/business-styles.css">
+    <link rel="icon" type="image/png" href="/Images/skysenseicon.png">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -25,10 +26,9 @@
             <!-- LOGO -->
             <div class="nav-logo">
                 <a href="/business/" class="logo-link">
-                    <i class="fas fa-cloud-sun logo-icon"></i>
+                    <img src="/Images/skysenseicon.png" alt="SkySense Logo" style="height: 30px; width: 30px;">
                     <div class="logo-text">
-                        <span class="brand-name">WeatherPro</span>
-                        <span class="brand-tagline">For Business</span>
+                        <span class="brand-name">SkySense</span>
                     </div>
                 </a>
             </div>
@@ -42,7 +42,7 @@
                     <a href="/business/safety" class="nav-link">Safety</a>
                 </li>
                 <li class="nav-item">
-                    <a href="/business/services/alerts" class="nav-link">Alerts</a>
+                    <a href="/business/alerts" class="nav-link">Alerts</a>
                 </li>
                 <li class="nav-item">
                     <a href="/weather-detailed" class="nav-link">Detailed View</a>
