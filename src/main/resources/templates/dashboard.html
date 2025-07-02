@@ -304,6 +304,73 @@
             margin: 20px 0;
         }
 
+        .forecast-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .forecast-location {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .forecast-time {
+            font-size: 0.8rem;
+            color: #95a5a6;
+        }
+
+        .hourly-item {
+            min-width: 90px;
+            text-align: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .hourly-item:hover {
+            background: #e8f4fd;
+            border-color: #4a90e2;
+            transform: translateY(-2px);
+        }
+
+        .hourly-item.current-hour {
+            background: #e8f4fd;
+            border: 2px solid #4a90e2;
+            position: relative;
+        }
+
+        .hourly-item.current-hour::before {
+            content: "NOW";
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4a90e2;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .auto-refresh-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            color: #50c878;
+            margin-left: 10px;
+        }
+
+        .auto-refresh-indicator.disabled {
+            color: #95a5a6;
+        }
+
         @media (max-width: 768px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
@@ -325,6 +392,11 @@
 
             .location-input {
                 min-width: 100%;
+            }
+
+            .hourly-item {
+                min-width: 80px;
+                padding: 10px;
             }
         }
     </style>
@@ -364,6 +436,9 @@
                     <button class="refresh-btn" onclick="refreshDashboard()">
                         <i class="fas fa-sync-alt"></i> Refresh
                     </button>
+                    <span id="autoRefreshIndicator" class="auto-refresh-indicator disabled">
+                        <i class="fas fa-circle"></i> Auto-refresh OFF
+                    </span>
                 </div>
             </div>
         </div>
@@ -442,19 +517,27 @@
                 </div>
             </div>
 
-            <!-- Hourly Forecast Card -->
+            <!-- Real-Time Hourly Forecast Card -->
             <div class="dashboard-card">
                 <div class="card-header">
                     <div class="card-icon" style="background: #9b59b6;">
                         <i class="fas fa-clock"></i>
                     </div>
-                    <h3 class="card-title">Hourly Forecast</h3>
+                    <h3 class="card-title">Real-Time Hourly Forecast</h3>
+                    <button onclick="toggleAutoRefresh()" style="margin-left: auto; padding: 6px 12px; border: 1px solid #9b59b6; border-radius: 4px; background: white; color: #9b59b6; font-size: 0.8rem; cursor: pointer;">
+                        <i class="fas fa-sync-alt" id="autoRefreshIcon"></i> <span id="autoRefreshText">Auto</span>
+                    </button>
                 </div>
 
-                <div id="hourlyForecast" style="display: flex; gap: 15px; overflow-x: auto; padding: 10px 0; min-height: 120px; align-items: center; justify-content: center;">
+                <div class="forecast-header">
+                    <div class="forecast-location" id="forecastLocation">Select a location</div>
+                    <div class="forecast-time" id="forecastTime">--</div>
+                </div>
+
+                <div id="hourlyForecast" style="display: flex; gap: 15px; overflow-x: auto; padding: 10px 0; min-height: 140px; align-items: center; justify-content: center;">
                     <div style="text-align: center; color: #7f8c8d;">
                         <i class="fas fa-clock" style="font-size: 2rem; margin-bottom: 15px;"></i>
-                        <p>Select a location to view hourly forecast</p>
+                        <p>Select a location to view real-time hourly forecast</p>
                     </div>
                 </div>
             </div>
@@ -482,6 +565,9 @@
         let currentLocation = null;
         let selectedCity = null;
         let selectedCountry = null;
+        let autoRefreshEnabled = false;
+        let autoRefreshInterval = null;
+        let lastForecastData = null;
 
         // Initialize dashboard when page loads
         document.addEventListener('DOMContentLoaded', function() {
@@ -493,6 +579,12 @@
                     searchLocation();
                 }
             });
+
+            // Start auto-refresh if enabled
+            const savedAutoRefresh = localStorage.getItem('autoRefreshEnabled');
+            if (savedAutoRefresh === 'true') {
+                toggleAutoRefresh();
+            }
         });
 
         function loadSavedLocation() {
@@ -532,7 +624,7 @@
             selectedCity = city;
             selectedCountry = country;
 
-            showMessage(`Loading weather data for ${city}...`, 'info');
+            showMessage(`Loading real-time weather data for ${city}...`, 'info');
 
             try {
                 await loadWeatherData(city, country);
@@ -545,7 +637,7 @@
                 // Clear the input
                 document.getElementById('locationInput').value = '';
 
-                showMessage(`Weather data loaded for ${city}`, 'success');
+                showMessage(`Real-time weather data loaded for ${city}`, 'success');
 
             } catch (error) {
                 console.error('Error loading location data:', error);
@@ -575,7 +667,7 @@
                         generateTravelAlerts();
                         updateLastUpdateTime();
 
-                        showMessage('Weather data loaded for your current location', 'success');
+                        showMessage('Real-time weather data loaded for your current location', 'success');
 
                     } catch (error) {
                         console.error('Error loading current location weather:', error);
@@ -628,7 +720,8 @@
             const result = await response.json();
 
             if (result.success && result.data) {
-                updateHourlyForecast(result.data.hourly);
+                lastForecastData = result.data;
+                updateHourlyForecast(result.data);
             }
         }
 
@@ -641,7 +734,8 @@
             const result = await response.json();
 
             if (result.success && result.data) {
-                updateHourlyForecast(result.data.hourly);
+                lastForecastData = result.data;
+                updateHourlyForecast(result.data);
             }
         }
 
@@ -670,31 +764,100 @@
             document.getElementById('pressure').textContent = (data.pressure || '--') + ' mb';
         }
 
-        function updateHourlyForecast(hourlyData) {
+        function updateHourlyForecast(forecastData) {
             const container = document.getElementById('hourlyForecast');
+            const locationElement = document.getElementById('forecastLocation');
+            const timeElement = document.getElementById('forecastTime');
+
             container.innerHTML = '';
 
-            if (!hourlyData || hourlyData.length === 0) {
+            if (!forecastData || !forecastData.hourly || forecastData.hourly.length === 0) {
                 container.innerHTML = `
                     <div style="text-align: center; color: #7f8c8d; width: 100%;">
                         <i class="fas fa-clock" style="font-size: 2rem; margin-bottom: 15px;"></i>
-                        <p>Hourly forecast not available</p>
+                        <p>Real-time hourly forecast not available</p>
                     </div>
                 `;
                 return;
             }
 
-            hourlyData.forEach(hour => {
+            // Update forecast header
+            locationElement.textContent = `Forecast for ${forecastData.location}`;
+            timeElement.textContent = `Updated: ${new Date(forecastData.timestamp).toLocaleTimeString()}`;
+
+            forecastData.hourly.forEach((hour, index) => {
                 const hourItem = document.createElement('div');
-                hourItem.style.cssText = 'min-width: 80px; text-align: center; padding: 10px; background: #f8f9fa; border-radius: 8px;';
+                const isCurrentHour = index === 0;
+
+                hourItem.className = `hourly-item ${isCurrentHour ? 'current-hour' : ''}`;
+
                 hourItem.innerHTML = `
-                    <div style="font-size: 0.8rem; color: #7f8c8d; margin-bottom: 8px;">${hour.time}</div>
-                    <img src="https://openweathermap.org/img/wn/${hour.icon}.png" alt="Weather" style="width: 40px; height: 40px; margin-bottom: 8px;">
-                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 5px;">${hour.temp}°</div>
-                    <div style="font-size: 0.7rem; color: #4a90e2;">${hour.precipitation}%</div>
+                    <div style="font-size: 0.8rem; color: #7f8c8d; margin-bottom: 8px; font-weight: ${isCurrentHour ? '600' : '400'};">${hour.time}</div>
+                    <img src="https://openweathermap.org/img/wn/${hour.icon}@2x.png" alt="Weather" style="width: 45px; height: 45px; margin-bottom: 8px;">
+                    <div style="font-weight: 600; color: #2c3e50; margin-bottom: 5px; font-size: ${isCurrentHour ? '1.1rem' : '1rem'};">${hour.temp}°F</div>
+                    <div style="font-size: 0.7rem; color: #4a90e2; margin-bottom: 3px;">
+                        <i class="fas fa-tint"></i> ${hour.precipitation}%
+                    </div>
+                    <div style="font-size: 0.7rem; color: #7f8c8d; margin-bottom: 3px;">
+                        <i class="fas fa-wind"></i> ${hour.windSpeed} mph
+                    </div>
+                    <div style="font-size: 0.7rem; color: #95a5a6;">
+                        <i class="fas fa-eye"></i> ${hour.visibility} mi
+                    </div>
                 `;
                 container.appendChild(hourItem);
             });
+        }
+
+        function toggleAutoRefresh() {
+            autoRefreshEnabled = !autoRefreshEnabled;
+            const indicator = document.getElementById('autoRefreshIndicator');
+            const icon = document.getElementById('autoRefreshIcon');
+            const text = document.getElementById('autoRefreshText');
+
+            if (autoRefreshEnabled) {
+                indicator.className = 'auto-refresh-indicator';
+                indicator.innerHTML = '<i class="fas fa-circle" style="color: #50c878;"></i> Auto-refresh ON';
+                icon.className = 'fas fa-sync-alt fa-spin';
+                text.textContent = 'Auto ON';
+
+                // Start auto-refresh every 3 minutes
+                autoRefreshInterval = setInterval(() => {
+                    refreshForecastData();
+                }, 3 * 60 * 1000);
+
+                showMessage('Auto-refresh enabled (every 3 minutes)', 'success');
+                localStorage.setItem('autoRefreshEnabled', 'true');
+            } else {
+                indicator.className = 'auto-refresh-indicator disabled';
+                indicator.innerHTML = '<i class="fas fa-circle"></i> Auto-refresh OFF';
+                icon.className = 'fas fa-sync-alt';
+                text.textContent = 'Auto OFF';
+
+                if (autoRefreshInterval) {
+                    clearInterval(autoRefreshInterval);
+                    autoRefreshInterval = null;
+                }
+
+                showMessage('Auto-refresh disabled', 'info');
+                localStorage.setItem('autoRefreshEnabled', 'false');
+            }
+        }
+
+        async function refreshForecastData() {
+            if (!selectedCity && !currentLocation) return;
+
+            try {
+                if (currentLocation) {
+                    await loadForecastDataByCoords(currentLocation.lat, currentLocation.lon);
+                } else if (selectedCity) {
+                    await loadForecastData(selectedCity, selectedCountry);
+                }
+
+                console.log('Forecast auto-refreshed at', new Date().toLocaleTimeString());
+            } catch (error) {
+                console.error('Error auto-refreshing forecast:', error);
+            }
         }
 
         async function generateCommuteRecommendations() {
@@ -881,6 +1044,20 @@
                 }, 3000);
             }
         }
+
+        // Handle page visibility changes for auto-refresh
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && autoRefreshInterval) {
+                // Pause auto-refresh when page is hidden
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+            } else if (!document.hidden && autoRefreshEnabled && !autoRefreshInterval) {
+                // Resume auto-refresh when page becomes visible
+                autoRefreshInterval = setInterval(() => {
+                    refreshForecastData();
+                }, 3 * 60 * 1000);
+            }
+        });
     </script>
 </div>
 </body>
