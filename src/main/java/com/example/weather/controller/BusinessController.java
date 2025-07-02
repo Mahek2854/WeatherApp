@@ -10,11 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
-import java.time.LocalTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.weather.service.WeatherService;
 import com.example.weather.service.CommuteRecommendationService;
@@ -44,82 +43,40 @@ public class BusinessController {
         return "dashboard";
     }
 
-    @GetMapping("/safety")
-    public String safety(Model model) {
-        model.addAttribute("pageTitle", "Safety Measures - WeatherPro Business");
-        return "safety";
-    }
+    @GetMapping("/weather-detailed")
+    public String weatherDetailed(Model model) {
+        // Add sample data for Sehore
+        Map<String, Object> location = new HashMap<>();
+        location.put("cityName", "Sehore");
+        location.put("country", "IN");
+        location.put("currentDateTime", "Wednesday, July 2, 2025 at 10:08 PM");
 
-    @GetMapping("/alerts")
-    public String alerts(Model model) {
-        model.addAttribute("pageTitle", "Weather Alerts & Warnings - WeatherPro Business");
-        return "alerts";
-    }
+        Map<String, Object> weather = new HashMap<>();
+        weather.put("tempValue", 24);
+        weather.put("feelsLikeValue", 22);
+        weather.put("weatherDescription", "overcast clouds");
+        weather.put("weatherMain", "Clear");
+        weather.put("weatherIcon", "01n");
+        weather.put("visibility", 10);
+        weather.put("humidity", 94);
+        weather.put("pressure", 1001);
+        weather.put("windSpeedValue", 3);
+        weather.put("uvi", 5);
+        weather.put("windDegree", 180);
+        weather.put("sunriseValue", "06:30 AM");
+        weather.put("sunsetValue", "07:45 PM");
 
-    @GetMapping("/services/forecasting")
-    public String forecasting(Model model) {
-        model.addAttribute("pageTitle", "Weather Forecasting Services");
-        return "services/forecasting";
-    }
+        Map<String, Object> daily = new HashMap<>();
+        daily.put("morningTemp", 18);
+        daily.put("dayTemp", 25);
+        daily.put("nightTemp", 15);
 
-    @GetMapping("/services/alerts")
-    public String alertsServices(Model model) {
-        model.addAttribute("pageTitle", "Weather Alerts & Warnings");
-        return "services/alerts";
-    }
+        model.addAttribute("location", location);
+        model.addAttribute("weather", weather);
+        model.addAttribute("daily", daily);
+        model.addAttribute("pageTitle", "Weather Details - WeatherPro Business");
 
-    @GetMapping("/services/analytics")
-    public String analytics(Model model) {
-        model.addAttribute("pageTitle", "Weather Analytics");
-        return "services/analytics";
-    }
-
-    @GetMapping("/services/api")
-    public String api(Model model) {
-        model.addAttribute("pageTitle", "Weather API Services");
-        return "services/api";
-    }
-
-    @GetMapping("/why-weatherpro")
-    public String whyWeatherPro(Model model) {
-        model.addAttribute("pageTitle", "Why Choose WeatherPro");
-        return "why-weatherpro";
-    }
-
-    @GetMapping("/weather-events")
-    public String weatherEvents(Model model) {
-        model.addAttribute("pageTitle", "Weather Events");
-        return "weather-events";
-    }
-
-    @GetMapping("/contact")
-    public String contact(Model model) {
-        model.addAttribute("pageTitle", "Contact Us");
-        return "contact";
-    }
-
-    @GetMapping("/get-started")
-    public String getStarted(Model model) {
-        model.addAttribute("pageTitle", "Get Started");
-        return "get-started";
-    }
-
-    @GetMapping("/support/documentation")
-    public String documentation(Model model) {
-        model.addAttribute("pageTitle", "Documentation");
-        return "support/documentation";
-    }
-
-    @GetMapping("/support/faq")
-    public String faq(Model model) {
-        model.addAttribute("pageTitle", "Frequently Asked Questions");
-        return "support/faq";
-    }
-
-    @GetMapping("/about")
-    public String about(Model model) {
-        model.addAttribute("pageTitle", "About WeatherPro");
-        return "about";
+        return "index";
     }
 
     @GetMapping("/api/weather/current")
@@ -131,34 +88,99 @@ public class BusinessController {
             @RequestParam(required = false) Double lon) {
 
         try {
+            System.out.println("Current weather API called with city: " + city + ", country: " + country + ", lat: " + lat + ", lon: " + lon);
+
             Map<String, Object> response = new HashMap<>();
 
-            if (lat != null && lon != null) {
-                var weather = weatherService.getWeatherByCoordinates(lat, lon);
-                if (weather != null) {
-                    response.put("success", true);
-                    response.put("data", weather);
-                    return ResponseEntity.ok(response);
-                }
-            } else if (city != null && !city.trim().isEmpty()) {
-                var weather = weatherService.getCompleteWeatherData(city, country != null ? country : "");
-                if (weather != null) {
-                    response.put("success", true);
-                    response.put("data", weather);
-                    return ResponseEntity.ok(response);
-                }
-            }
+            // Generate current weather data based on location
+            Map<String, Object> currentWeather = generateCurrentWeatherData(city, country, lat, lon);
 
-            response.put("success", false);
-            response.put("error", "Weather data not found");
+            Map<String, Object> weatherData = new HashMap<>();
+            weatherData.put("current", currentWeather);
+            weatherData.put("location", city != null ? city : "Current Location");
+            weatherData.put("lastUpdated", LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+
+            response.put("success", true);
+            response.put("data", weatherData);
+
+            System.out.println("Current weather API response: " + response);
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
+            System.err.println("Error in current weather API: " + e.getMessage());
+            e.printStackTrace();
+
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
             errorResponse.put("error", e.getMessage());
             return ResponseEntity.ok(errorResponse);
         }
+    }
+
+    private Map<String, Object> generateCurrentWeatherData(String city, String country, Double lat, Double lon) {
+        Map<String, Object> weather = new HashMap<>();
+
+        // Determine climate type
+        ClimateType climate = determineClimateType(city, country, lat, lon);
+
+        // Generate realistic current weather based on location
+        int currentHour = LocalDateTime.now().getHour();
+        int baseTemp = getBaseTemperature(climate);
+        int tempVariation = getTemperatureVariation(currentHour, climate);
+        int temperature = baseTemp + tempVariation + random.nextInt(3) - 1;
+
+        weather.put("temp", temperature);
+        weather.put("feelsLike", temperature + random.nextInt(4) - 2);
+        weather.put("description", getWeatherDescription(climate, currentHour));
+        weather.put("main", getWeatherMain(climate));
+        weather.put("icon", getWeatherIcon(currentHour, climate, 0));
+        weather.put("visibility", getVisibility(climate, getPrecipitation(climate, currentHour)));
+        weather.put("humidity", getHumidity(climate));
+        weather.put("pressure", 1013 + random.nextInt(20) - 10);
+        weather.put("windSpeed", getWindSpeed(climate, currentHour));
+        weather.put("uvIndex", getUVIndex(currentHour));
+        weather.put("windDirection", 180 + random.nextInt(180) - 90);
+
+        return weather;
+    }
+
+    private String getWeatherDescription(ClimateType climate, int hour) {
+        boolean isNight = hour < 6 || hour > 20;
+
+        switch (climate) {
+            case DESERT:
+                return isNight ? "clear night sky" : "sunny and hot";
+            case TROPICAL:
+                if (hour >= 14 && hour <= 17) {
+                    return "afternoon thunderstorms possible";
+                }
+                return isNight ? "warm and humid night" : "hot and humid";
+            case OCEANIC:
+                return isNight ? "cloudy night" : "partly cloudy";
+            case CONTINENTAL:
+                return isNight ? "clear night" : "partly sunny";
+            case MEDITERRANEAN:
+                return isNight ? "mild night" : "pleasant and sunny";
+            default:
+                return isNight ? "clear night" : "partly cloudy";
+        }
+    }
+
+    private String getWeatherMain(ClimateType climate) {
+        switch (climate) {
+            case DESERT: return "Clear";
+            case TROPICAL: return random.nextDouble() < 0.3 ? "Rain" : "Clouds";
+            case OCEANIC: return "Clouds";
+            case CONTINENTAL: return random.nextDouble() < 0.2 ? "Clouds" : "Clear";
+            case MEDITERRANEAN: return "Clear";
+            default: return "Clear";
+        }
+    }
+
+    private int getUVIndex(int hour) {
+        if (hour < 6 || hour > 18) return 0; // No UV at night
+        if (hour < 10 || hour > 16) return random.nextInt(3) + 1; // Low UV
+        return random.nextInt(6) + 5; // High UV during midday
     }
 
     @GetMapping("/api/weather/forecast")
@@ -170,35 +192,29 @@ public class BusinessController {
             @RequestParam(required = false) Double lon) {
 
         try {
+            System.out.println("Forecast API called with city: " + city + ", country: " + country + ", lat: " + lat + ", lon: " + lon);
+
             Map<String, Object> response = new HashMap<>();
 
-            // Get current weather data for the location to base forecast on
-            WeatherData currentWeather = null;
-            String locationName = "Unknown Location";
-
-            if (lat != null && lon != null) {
-                currentWeather = weatherService.getWeatherByCoordinates(lat, lon);
-                locationName = currentWeather != null ? currentWeather.getCity() : "Current Location";
-            } else if (city != null && !city.trim().isEmpty()) {
-                currentWeather = weatherService.getCompleteWeatherData(city, country != null ? country : "");
-                locationName = city + (country != null && !country.isEmpty() ? ", " + country : "");
-            }
-
-            // Generate real-time location-specific forecast
-            List<Map<String, Object>> hourlyForecast = generateLocationSpecificForecast(currentWeather, locationName);
+            // Generate location-specific hourly forecast
+            List<Map<String, Object>> hourlyForecast = generateLocationSpecificForecast(city, country, lat, lon);
+            System.out.println("Generated " + hourlyForecast.size() + " hourly forecast items");
 
             Map<String, Object> forecastData = new HashMap<>();
             forecastData.put("hourly", hourlyForecast);
-            forecastData.put("location", locationName);
-            forecastData.put("timestamp", System.currentTimeMillis());
-            forecastData.put("timezone", getCurrentTimezone(locationName));
+            forecastData.put("location", city != null ? city : "Current Location");
+            forecastData.put("lastUpdated", LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
 
             response.put("success", true);
             response.put("data", forecastData);
 
+            System.out.println("Forecast API response: " + response);
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
+            System.err.println("Error in forecast API: " + e.getMessage());
+            e.printStackTrace();
+
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
             errorResponse.put("error", e.getMessage());
@@ -242,337 +258,232 @@ public class BusinessController {
         }
     }
 
-    private List<Map<String, Object>> generateLocationSpecificForecast(WeatherData currentWeather, String locationName) {
+    private List<Map<String, Object>> generateLocationSpecificForecast(String city, String country, Double lat, Double lon) {
         List<Map<String, Object>> forecast = new ArrayList<>();
 
-        // Get base temperature from current weather or use location-based defaults
-        int baseTemp = getLocationBaseTemperature(currentWeather, locationName);
+        // Determine climate type based on city
+        ClimateType climate = determineClimateType(city, country, lat, lon);
+        System.out.println("Determined climate type: " + climate + " for city: " + city);
 
-        // Get location-specific weather patterns
-        LocationWeatherPattern pattern = getLocationWeatherPattern(locationName);
+        // Get current hour
+        int currentHour = LocalDateTime.now().getHour();
 
-        LocalDateTime now = LocalDateTime.now();
-
-        // Generate 12 hours of location-specific forecast
-        for (int i = 0; i < 12; i++) {
-            LocalDateTime hourTime = now.plusHours(i);
-            String timeStr = i == 0 ? "Now" : hourTime.format(DateTimeFormatter.ofPattern("h a"));
-
-            // Calculate temperature based on location, time, and weather patterns
-            int hourTemp = calculateLocationTemperature(baseTemp, hourTime.getHour(), pattern, i);
-
-            // Select weather icon based on location patterns and time
-            String icon = selectLocationWeatherIcon(hourTime.getHour(), pattern, i);
-
-            // Calculate precipitation based on location climate
-            int precipitation = calculateLocationPrecipitation(pattern, icon, hourTime.getHour());
-
-            // Calculate wind speed based on location and weather
-            int windSpeed = calculateLocationWindSpeed(pattern, icon, hourTime.getHour());
-
-            forecast.add(createLocationHourlyItem(
-                    timeStr,
-                    hourTemp,
-                    icon,
-                    precipitation,
-                    windSpeed,
-                    hourTime.getHour(),
-                    pattern
-            ));
+        // Generate 24 hours of forecast data
+        for (int i = 0; i < 24; i++) {
+            int hour = (currentHour + i) % 24;
+            Map<String, Object> hourData = generateHourlyData(hour, i, climate);
+            forecast.add(hourData);
         }
 
+        System.out.println("Generated forecast with " + forecast.size() + " hours of data");
         return forecast;
     }
 
-    private int getLocationBaseTemperature(WeatherData currentWeather, String locationName) {
-        if (currentWeather != null && currentWeather.getTemperature() != null) {
-            // Convert Celsius to Fahrenheit
-            return (int) Math.round(currentWeather.getTemperature() * 9.0 / 5.0 + 32);
+    private ClimateType determineClimateType(String city, String country, Double lat, Double lon) {
+        if (city == null) return ClimateType.TEMPERATE;
+
+        String cityLower = city.toLowerCase();
+        String countryLower = country != null ? country.toLowerCase() : "";
+
+        // Indian cities - mostly tropical/temperate
+        if (countryLower.contains("in") || cityLower.contains("sehore") ||
+                cityLower.contains("mumbai") || cityLower.contains("delhi") ||
+                cityLower.contains("bangalore") || cityLower.contains("chennai")) {
+            return ClimateType.TROPICAL;
         }
 
-        // Location-based temperature defaults
-        String location = locationName.toLowerCase();
-        if (location.contains("dubai") || location.contains("phoenix") || location.contains("miami")) {
-            return 85 + random.nextInt(15); // 85-100°F
-        } else if (location.contains("london") || location.contains("seattle") || location.contains("vancouver")) {
-            return 55 + random.nextInt(20); // 55-75°F
-        } else if (location.contains("new york") || location.contains("chicago") || location.contains("boston")) {
-            return 65 + random.nextInt(20); // 65-85°F
-        } else if (location.contains("tokyo") || location.contains("seoul") || location.contains("beijing")) {
-            return 70 + random.nextInt(15); // 70-85°F
-        } else if (location.contains("sydney") || location.contains("melbourne") || location.contains("brisbane")) {
-            return 75 + random.nextInt(15); // 75-90°F
-        } else if (location.contains("paris") || location.contains("berlin") || location.contains("madrid")) {
-            return 68 + random.nextInt(17); // 68-85°F
+        // Desert climates
+        if (cityLower.contains("dubai") || cityLower.contains("phoenix") ||
+                cityLower.contains("las vegas") || cityLower.contains("riyadh")) {
+            return ClimateType.DESERT;
+        }
+
+        // Tropical climates
+        if (cityLower.contains("miami") || cityLower.contains("singapore") ||
+                cityLower.contains("bangkok") || countryLower.contains("thailand")) {
+            return ClimateType.TROPICAL;
+        }
+
+        // Cold/Continental climates
+        if (cityLower.contains("moscow") || cityLower.contains("chicago") ||
+                cityLower.contains("toronto") || cityLower.contains("minneapolis")) {
+            return ClimateType.CONTINENTAL;
+        }
+
+        // Oceanic climates
+        if (cityLower.contains("london") || cityLower.contains("seattle") ||
+                cityLower.contains("vancouver") || countryLower.contains("uk")) {
+            return ClimateType.OCEANIC;
+        }
+
+        // Mediterranean climates
+        if (cityLower.contains("sydney") || cityLower.contains("melbourne") ||
+                cityLower.contains("los angeles") || cityLower.contains("barcelona")) {
+            return ClimateType.MEDITERRANEAN;
+        }
+
+        return ClimateType.TEMPERATE;
+    }
+
+    private Map<String, Object> generateHourlyData(int hour, int hoursFromNow, ClimateType climate) {
+        Map<String, Object> data = new HashMap<>();
+
+        // Time formatting
+        String timeStr;
+        if (hoursFromNow == 0) {
+            timeStr = "NOW";
         } else {
-            return 70 + random.nextInt(20); // Default 70-90°F
+            timeStr = String.format("%02d:00", hour);
+        }
+        data.put("time", timeStr);
+
+        // Temperature based on climate and time of day
+        int baseTemp = getBaseTemperature(climate);
+        int tempVariation = getTemperatureVariation(hour, climate);
+        int temperature = baseTemp + tempVariation + random.nextInt(3) - 1; // ±1°C random variation
+
+        data.put("temp", temperature);
+        data.put("tempF", Math.round(temperature * 9.0/5.0 + 32)); // Fahrenheit conversion
+
+        // Weather icon based on time and climate
+        String icon = getWeatherIcon(hour, climate, hoursFromNow);
+        data.put("icon", icon);
+
+        // Precipitation based on climate
+        int precipitation = getPrecipitation(climate, hour);
+        data.put("precipitation", precipitation);
+
+        // Wind speed
+        int windSpeed = getWindSpeed(climate, hour);
+        data.put("windSpeed", windSpeed);
+
+        // Visibility
+        int visibility = getVisibility(climate, precipitation);
+        data.put("visibility", visibility);
+
+        // Additional details
+        data.put("humidity", getHumidity(climate));
+        data.put("pressure", 1013 + random.nextInt(20) - 10);
+
+        return data;
+    }
+
+    private int getBaseTemperature(ClimateType climate) {
+        switch (climate) {
+            case DESERT: return 35; // Hot desert
+            case TROPICAL: return 28; // Warm tropical
+            case CONTINENTAL: return 15; // Variable continental
+            case OCEANIC: return 12; // Cool oceanic
+            case MEDITERRANEAN: return 22; // Mild Mediterranean
+            default: return 20; // Temperate
         }
     }
 
-    private LocationWeatherPattern getLocationWeatherPattern(String locationName) {
-        String location = locationName.toLowerCase();
+    private int getTemperatureVariation(int hour, ClimateType climate) {
+        // Temperature curve throughout the day
+        double hourRadians = (hour - 6) * Math.PI / 12; // Peak at 2 PM (hour 14)
+        double tempCurve = Math.sin(hourRadians);
 
-        if (location.contains("dubai") || location.contains("phoenix")) {
-            return new LocationWeatherPattern("desert", new String[]{"01d", "02d"}, new String[]{"01n", "02n"}, 5, 15);
-        } else if (location.contains("london") || location.contains("seattle")) {
-            return new LocationWeatherPattern("temperate_wet", new String[]{"03d", "04d", "09d", "10d"}, new String[]{"03n", "04n", "09n", "10n"}, 40, 25);
-        } else if (location.contains("miami") || location.contains("singapore")) {
-            return new LocationWeatherPattern("tropical", new String[]{"02d", "03d", "09d", "10d", "11d"}, new String[]{"02n", "03n", "09n", "10n"}, 60, 20);
-        } else if (location.contains("new york") || location.contains("chicago")) {
-            return new LocationWeatherPattern("continental", new String[]{"01d", "02d", "03d", "04d", "09d"}, new String[]{"01n", "02n", "03n", "04n"}, 25, 18);
-        } else if (location.contains("tokyo") || location.contains("seoul")) {
-            return new LocationWeatherPattern("humid_subtropical", new String[]{"02d", "03d", "04d", "09d", "10d"}, new String[]{"02n", "03n", "04n", "09n"}, 35, 22);
-        } else if (location.contains("sydney") || location.contains("melbourne")) {
-            return new LocationWeatherPattern("oceanic", new String[]{"01d", "02d", "03d", "09d"}, new String[]{"01n", "02n", "03n", "09n"}, 30, 20);
+        int maxVariation;
+        switch (climate) {
+            case DESERT: maxVariation = 15; break; // Large day/night variation
+            case CONTINENTAL: maxVariation = 12; break;
+            case MEDITERRANEAN: maxVariation = 8; break;
+            case TROPICAL: maxVariation = 5; break; // Small variation
+            case OCEANIC: maxVariation = 6; break;
+            default: maxVariation = 10; break;
+        }
+
+        return (int) (tempCurve * maxVariation);
+    }
+
+    private String getWeatherIcon(int hour, ClimateType climate, int hoursFromNow) {
+        boolean isNight = hour < 6 || hour > 20;
+        String dayNight = isNight ? "n" : "d";
+
+        // Weather progression logic
+        if (climate == ClimateType.OCEANIC && random.nextDouble() < 0.4) {
+            return "09" + dayNight; // Rain
+        } else if (climate == ClimateType.TROPICAL && hour >= 14 && hour <= 17 && random.nextDouble() < 0.6) {
+            return "11" + dayNight; // Afternoon thunderstorms
+        } else if (climate == ClimateType.DESERT) {
+            return "01" + dayNight; // Clear skies
+        } else if (hoursFromNow > 12 && random.nextDouble() < 0.3) {
+            return "03" + dayNight; // Scattered clouds
+        } else if (random.nextDouble() < 0.2) {
+            return "02" + dayNight; // Few clouds
         } else {
-            return new LocationWeatherPattern("temperate", new String[]{"01d", "02d", "03d", "04d"}, new String[]{"01n", "02n", "03n", "04n"}, 20, 15);
+            return "01" + dayNight; // Clear
         }
     }
 
-    private int calculateLocationTemperature(int baseTemp, int hour, LocationWeatherPattern pattern, int hoursFromNow) {
-        int tempVariation = 0;
-
-        // Daily temperature curve based on location climate
-        if (pattern.climate.equals("desert")) {
-            // Desert: Hot days, cooler nights
-            if (hour >= 22 || hour <= 6) {
-                tempVariation = -15 - random.nextInt(10); // Much cooler at night
-            } else if (hour >= 12 && hour <= 16) {
-                tempVariation = 10 + random.nextInt(15); // Very hot midday
-            } else {
-                tempVariation = random.nextInt(10) - 5;
-            }
-        } else if (pattern.climate.equals("tropical")) {
-            // Tropical: Consistent warm with afternoon storms
-            if (hour >= 14 && hour <= 17) {
-                tempVariation = -5 - random.nextInt(8); // Cooler during afternoon storms
-            } else {
-                tempVariation = random.nextInt(6) - 3; // Minimal variation
-            }
-        } else if (pattern.climate.equals("temperate_wet")) {
-            // Temperate wet: Moderate temperatures, cloudy
-            if (hour >= 22 || hour <= 6) {
-                tempVariation = -8 - random.nextInt(6);
-            } else if (hour >= 13 && hour <= 16) {
-                tempVariation = 5 + random.nextInt(8);
-            } else {
-                tempVariation = random.nextInt(8) - 4;
-            }
-        } else {
-            // Default temperate pattern
-            if (hour >= 22 || hour <= 6) {
-                tempVariation = -10 - random.nextInt(8);
-            } else if (hour >= 12 && hour <= 16) {
-                tempVariation = 8 + random.nextInt(10);
-            } else {
-                tempVariation = random.nextInt(8) - 4;
-            }
+    private int getPrecipitation(ClimateType climate, int hour) {
+        int basePrecipitation;
+        switch (climate) {
+            case OCEANIC: basePrecipitation = 40; break;
+            case TROPICAL:
+                // Higher chance in afternoon
+                basePrecipitation = (hour >= 14 && hour <= 17) ? 70 : 30;
+                break;
+            case CONTINENTAL: basePrecipitation = 25; break;
+            case MEDITERRANEAN: basePrecipitation = 15; break;
+            case DESERT: basePrecipitation = 5; break;
+            default: basePrecipitation = 20; break;
         }
 
-        return baseTemp + tempVariation;
+        return Math.max(0, basePrecipitation + random.nextInt(20) - 10);
     }
 
-    private String selectLocationWeatherIcon(int hour, LocationWeatherPattern pattern, int hoursFromNow) {
-        String[] icons = (hour >= 6 && hour < 20) ? pattern.dayIcons : pattern.nightIcons;
-
-        // Add some weather progression logic
-        if (pattern.climate.equals("tropical") && hour >= 14 && hour <= 17) {
-            // Afternoon storms in tropical climates
-            return random.nextBoolean() ? "11d" : "09d";
-        } else if (pattern.climate.equals("temperate_wet") && random.nextInt(100) < 40) {
-            // Higher chance of rain in wet climates
-            return (hour >= 6 && hour < 20) ? "09d" : "09n";
+    private int getWindSpeed(ClimateType climate, int hour) {
+        int baseWind;
+        switch (climate) {
+            case OCEANIC: baseWind = 15; break;
+            case CONTINENTAL: baseWind = 12; break;
+            case DESERT: baseWind = 8; break;
+            case TROPICAL: baseWind = 10; break;
+            case MEDITERRANEAN: baseWind = 12; break;
+            default: baseWind = 10; break;
         }
 
-        return icons[random.nextInt(icons.length)];
-    }
-
-    private int calculateLocationPrecipitation(LocationWeatherPattern pattern, String icon, int hour) {
-        int basePrecipitation = pattern.avgPrecipitation;
-
-        // Adjust based on weather icon
-        if (icon.contains("09") || icon.contains("10")) {
-            basePrecipitation += 30 + random.nextInt(40); // Rain
-        } else if (icon.contains("11")) {
-            basePrecipitation += 50 + random.nextInt(40); // Thunderstorms
-        } else if (icon.contains("03") || icon.contains("04")) {
-            basePrecipitation += 10 + random.nextInt(20); // Cloudy
-        }
-
-        // Tropical afternoon storms
-        if (pattern.climate.equals("tropical") && hour >= 14 && hour <= 17) {
-            basePrecipitation += 20;
-        }
-
-        return Math.min(Math.max(basePrecipitation + random.nextInt(20) - 10, 0), 100);
-    }
-
-    private int calculateLocationWindSpeed(LocationWeatherPattern pattern, String icon, int hour) {
-        int baseWind = pattern.avgWindSpeed;
-
-        // Adjust based on weather conditions
-        if (icon.contains("11")) {
-            baseWind += 15 + random.nextInt(20); // Thunderstorms
-        } else if (icon.contains("09") || icon.contains("10")) {
-            baseWind += 5 + random.nextInt(10); // Rain
-        }
-
-        // Desert and coastal areas tend to be windier
-        if (pattern.climate.equals("desert")) {
-            baseWind += 5;
-        } else if (pattern.climate.equals("oceanic")) {
-            baseWind += 8;
-        }
-
-        // Afternoon tends to be windier
-        if (hour >= 12 && hour <= 18) {
+        // Wind tends to be stronger during day
+        if (hour >= 10 && hour <= 16) {
             baseWind += 3;
         }
 
-        return Math.min(baseWind + random.nextInt(8) - 4, 45);
+        return Math.max(0, baseWind + random.nextInt(8) - 4);
     }
 
-    private Map<String, Object> createLocationHourlyItem(String time, int temp, String icon, int precipitation, int windSpeed, int hour, LocationWeatherPattern pattern) {
-        Map<String, Object> item = new HashMap<>();
-        item.put("time", time);
-        item.put("temp", temp);
-        item.put("icon", icon);
-        item.put("precipitation", precipitation);
-        item.put("windSpeed", windSpeed);
+    private int getVisibility(ClimateType climate, int precipitation) {
+        int baseVisibility = 10; // km
 
-        // Add location-specific additional data
-        item.put("humidity", calculateLocationHumidity(pattern, hour));
-        item.put("uvIndex", calculateUVIndex(hour, pattern));
-        item.put("visibility", calculateLocationVisibility(pattern, icon));
-        item.put("pressure", 1013 + random.nextInt(40) - 20); // 993-1033 mb
+        if (precipitation > 50) {
+            baseVisibility = 3; // Poor visibility in heavy rain
+        } else if (precipitation > 20) {
+            baseVisibility = 6; // Reduced visibility in light rain
+        }
 
-        return item;
+        if (climate == ClimateType.DESERT) {
+            baseVisibility = Math.max(baseVisibility, 15); // Generally clear in desert
+        }
+
+        return Math.max(1, baseVisibility + random.nextInt(4) - 2);
     }
 
-    private int calculateLocationHumidity(LocationWeatherPattern pattern, int hour) {
-        int baseHumidity = 50;
-
-        if (pattern.climate.equals("tropical")) {
-            baseHumidity = 70 + random.nextInt(20); // 70-90%
-        } else if (pattern.climate.equals("desert")) {
-            baseHumidity = 20 + random.nextInt(25); // 20-45%
-        } else if (pattern.climate.equals("temperate_wet")) {
-            baseHumidity = 60 + random.nextInt(25); // 60-85%
-        } else {
-            baseHumidity = 40 + random.nextInt(35); // 40-75%
+    private int getHumidity(ClimateType climate) {
+        int baseHumidity;
+        switch (climate) {
+            case TROPICAL: baseHumidity = 80; break;
+            case OCEANIC: baseHumidity = 75; break;
+            case CONTINENTAL: baseHumidity = 60; break;
+            case MEDITERRANEAN: baseHumidity = 55; break;
+            case DESERT: baseHumidity = 25; break;
+            default: baseHumidity = 65; break;
         }
 
-        // Higher humidity at night
-        if (hour >= 22 || hour <= 6) {
-            baseHumidity += 10;
-        }
-
-        return Math.min(Math.max(baseHumidity, 15), 95);
+        return Math.max(10, Math.min(95, baseHumidity + random.nextInt(20) - 10));
     }
 
-    private int calculateUVIndex(int hour, LocationWeatherPattern pattern) {
-        if (hour < 8 || hour > 18) {
-            return 0; // No UV at night
-        }
-
-        int baseUV = 5;
-
-        if (pattern.climate.equals("desert") || pattern.climate.equals("tropical")) {
-            baseUV = 8; // Higher UV in sunny/tropical climates
-        } else if (pattern.climate.equals("temperate_wet")) {
-            baseUV = 3; // Lower UV in cloudy climates
-        }
-
-        // Peak UV around midday
-        if (hour >= 11 && hour <= 15) {
-            baseUV += 2;
-        } else if (hour >= 9 && hour <= 17) {
-            baseUV += 1;
-        }
-
-        return Math.min(Math.max(baseUV + random.nextInt(3) - 1, 0), 11);
-    }
-
-    private int calculateLocationVisibility(LocationWeatherPattern pattern, String icon) {
-        int baseVisibility = 10; // miles
-
-        if (icon.contains("09") || icon.contains("10")) {
-            baseVisibility = 3 + random.nextInt(4); // 3-7 miles in rain
-        } else if (icon.contains("11")) {
-            baseVisibility = 2 + random.nextInt(3); // 2-5 miles in storms
-        } else if (icon.contains("50")) {
-            baseVisibility = 1 + random.nextInt(2); // 1-3 miles in fog
-        } else if (pattern.climate.equals("desert")) {
-            baseVisibility = 15 + random.nextInt(10); // Very clear in desert
-        }
-
-        return Math.max(baseVisibility + random.nextInt(3) - 1, 1);
-    }
-
-    private String getCurrentTimezone(String locationName) {
-        String location = locationName.toLowerCase();
-
-        if (location.contains("new york") || location.contains("boston") || location.contains("miami")) {
-            return "EST";
-        } else if (location.contains("chicago") || location.contains("dallas")) {
-            return "CST";
-        } else if (location.contains("denver") || location.contains("phoenix")) {
-            return "MST";
-        } else if (location.contains("los angeles") || location.contains("seattle")) {
-            return "PST";
-        } else if (location.contains("london") || location.contains("paris") || location.contains("berlin")) {
-            return "CET";
-        } else if (location.contains("tokyo") || location.contains("seoul")) {
-            return "JST";
-        } else if (location.contains("sydney") || location.contains("melbourne")) {
-            return "AEST";
-        } else if (location.contains("dubai")) {
-            return "GST";
-        } else {
-            return "UTC";
-        }
-    }
-
-    // Helper class for location weather patterns
-    private static class LocationWeatherPattern {
-        String climate;
-        String[] dayIcons;
-        String[] nightIcons;
-        int avgPrecipitation;
-        int avgWindSpeed;
-
-        LocationWeatherPattern(String climate, String[] dayIcons, String[] nightIcons, int avgPrecipitation, int avgWindSpeed) {
-            this.climate = climate;
-            this.dayIcons = dayIcons;
-            this.nightIcons = nightIcons;
-            this.avgPrecipitation = avgPrecipitation;
-            this.avgWindSpeed = avgWindSpeed;
-        }
-    }
-
-    // Legacy method for backward compatibility
-    private Object generateMockForecast() {
-        Map<String, Object> forecast = new HashMap<>();
-        forecast.put("hourly", java.util.Arrays.asList(
-                createHourlyItem("12 PM", 75, "01d", 10),
-                createHourlyItem("1 PM", 77, "02d", 15),
-                createHourlyItem("2 PM", 79, "02d", 20),
-                createHourlyItem("3 PM", 78, "03d", 35),
-                createHourlyItem("4 PM", 76, "09d", 60),
-                createHourlyItem("5 PM", 74, "10d", 80),
-                createHourlyItem("6 PM", 72, "04d", 45),
-                createHourlyItem("7 PM", 70, "02n", 25)
-        ));
-        return forecast;
-    }
-
-    private Map<String, Object> createHourlyItem(String time, int temp, String icon, int precipitation) {
-        Map<String, Object> item = new HashMap<>();
-        item.put("time", time);
-        item.put("temp", temp);
-        item.put("icon", icon);
-        item.put("precipitation", precipitation);
-        item.put("windSpeed", 5 + random.nextInt(10));
-        return item;
+    private enum ClimateType {
+        DESERT, TROPICAL, CONTINENTAL, OCEANIC, MEDITERRANEAN, TEMPERATE
     }
 }

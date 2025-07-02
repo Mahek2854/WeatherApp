@@ -4,172 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Dashboard</title>
-    <link rel="stylesheet" th:href="@{/css/weather-styles.css}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="icon" type="image/png" th:href="@{/Images/skysenseicon.png}">
-    <style>
-        /* Navigation styles */
-        .top-navigation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            padding: 0 20px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 600;
-            color: #2c3e50;
-            text-decoration: none;
-        }
-
-        .nav-brand img {
-            height: 30px;
-            width: 30px;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border-radius: 8px;
-            text-decoration: none;
-            color: #2c3e50;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-        }
-
-        .nav-link:hover {
-            background: #f8f9fa;
-            color: #3498db;
-            border-color: #e9ecef;
-        }
-
-        .nav-link.active {
-            background: #3498db;
-            color: white;
-        }
-
-        .nav-link i {
-            font-size: 0.9rem;
-        }
-
-        /* Adjust main content to account for fixed navigation */
-        .main-content {
-            padding-top: 80px;
-        }
-
-        /* Mobile responsive */
-        @media (max-width: 768px) {
-            .nav-links {
-                gap: 10px;
-            }
-
-            .nav-link {
-                padding: 6px 12px;
-                font-size: 0.9rem;
-            }
-
-            .nav-link span {
-                display: none;
-            }
-        }
-
-        /* Update sidebar to work with top navigation */
-        .sidebar {
-            top: 60px;
-            height: calc(100vh - 60px);
-        }
-
-        /* Menu button adjustment */
-        .menu-btn {
-            top: 70px;
-        }
-
-        /* Additional styles for quick navigation */
-        .quick-nav-section {
-            margin-bottom: 25px;
-        }
-
-        .quick-nav-section h4 {
-            color: #2c3e50;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .quick-nav-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .quick-nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: #f8f9fa;
-            border-radius: 8px;
-            text-decoration: none;
-            color: #2c3e50;
-            transition: all 0.3s ease;
-            border: 1px solid #e9ecef;
-        }
-
-        .quick-nav-item:hover {
-            background: #e9ecef;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .quick-nav-item i {
-            font-size: 1.2rem;
-            color: #3498db;
-            width: 20px;
-            text-align: center;
-        }
-
-        .nav-title {
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 2px;
-        }
-
-        .nav-desc {
-            font-size: 0.75rem;
-            color: #7f8c8d;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/weather-dashboard.css">
 </head>
 <body>
+<!-- Video Background -->
+<video autoplay muted loop class="video-background">
+    <source src="/Images/background.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
 <!-- Top Navigation -->
 <nav class="top-navigation">
-    <a href="/weather-detailed" class="nav-brand">
-        <img th:src="@{/Images/skysenseicon.png}" alt="SkySense Logo">
+    <a href="/business/" class="nav-brand">
+        <i class="fas fa-sun"></i>
         <span>SkySense</span>
     </a>
 
@@ -189,8 +38,6 @@
     </div>
 </nav>
 
-<!-- Rest of the file remains the same -->
-
 <!-- Sidebar -->
 <div id="sidebar" class="sidebar">
     <div class="sidebar-header">
@@ -209,43 +56,34 @@
                     <i class="fas fa-search"></i>
                 </button>
             </div>
-            <div id="searchSuggestions" class="search-suggestions"></div>
         </div>
 
         <!-- Current Location -->
-        <div class="current-location-section">
-            <button id="useCurrentLocation" class="current-location-btn">
-                <i class="fas fa-location-arrow"></i>
-                Use Current Location
-            </button>
-        </div>
-
-        <!-- Quick Navigation -->
-        <div class="quick-nav-section">
-            <h4><i class="fas fa-compass"></i> Quick Navigation</h4>
-            <div class="quick-nav-list">
-                <a href="/business/" class="quick-nav-item">
-                    <i class="fas fa-home"></i>
-                    <div>
-                        <div class="nav-title">Business Home</div>
-                        <div class="nav-desc">Services & Information</div>
-                    </div>
-                </a>
-                <a href="/business/dashboard" class="quick-nav-item">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <div>
-                        <div class="nav-title">Weather Dashboard</div>
-                        <div class="nav-desc">Radar & Conditions</div>
-                    </div>
-                </a>
-            </div>
-        </div>
+        <button id="useCurrentLocation" class="current-location-btn">
+            <i class="fas fa-location-arrow"></i>
+            Use Current Location
+        </button>
 
         <!-- Recent Locations -->
         <div class="recent-locations-section">
             <h4><i class="fas fa-history"></i> Recent Locations</h4>
-            <div id="recentLocationsList" class="recent-locations-list">
-                <!-- Recent locations will be populated here -->
+            <div id="recentLocationsList">
+                <div class="recent-location-item" data-city="Sehore" data-country="IN">
+                    <i class="fas fa-clock"></i>
+                    <span>Sehore, IN</span>
+                </div>
+                <div class="recent-location-item" data-city="Mumbai" data-country="IN">
+                    <i class="fas fa-clock"></i>
+                    <span>Mumbai, IN</span>
+                </div>
+                <div class="recent-location-item" data-city="New York" data-country="US">
+                    <i class="fas fa-clock"></i>
+                    <span>New York, US</span>
+                </div>
+                <div class="recent-location-item" data-city="Sydney" data-country="AU">
+                    <i class="fas fa-clock"></i>
+                    <span>Sydney, AU</span>
+                </div>
             </div>
         </div>
 
@@ -288,14 +126,14 @@
 
     <div class="weather-container">
         <!-- Header Section -->
-        <header class="weather-header">
+        <header class="weather-card weather-header">
             <div class="location-info">
                 <h1 class="city-name">
                     <i class="fas fa-map-marker-alt"></i>
-                    <span th:text="${location?.cityName ?: 'City'}">City</span>,
-                    <span th:text="${location?.country ?: 'Country'}">Country</span>
+                    <span th:text="${location?.cityName ?: 'Sehore'}">Sehore</span>,
+                    <span th:text="${location?.country ?: 'IN'}">IN</span>
                 </h1>
-                <p class="current-time" th:text="${location?.currentDateTime ?: 'Current Date Time'}">Current Date Time</p>
+                <p class="current-time" th:text="${location?.currentDateTime ?: 'Wednesday, July 2, 2025 at 10:08 PM'}">Wednesday, July 2, 2025 at 10:08 PM</p>
             </div>
             <div class="header-actions">
                 <button id="searchToggle" class="btn-search">
@@ -310,138 +148,136 @@
         </header>
 
         <!-- Main Weather Section -->
-        <main class="main-weather">
-            <div class="current-weather-card">
-                <div class="weather-main">
-                    <div class="weather-icon-section">
-                        <img th:src="${weather?.weatherIcon ?: 'https://openweathermap.org/img/wn/01d@2x.png'}"
-                             th:alt="${weather?.weatherDescription ?: 'Weather icon'}"
-                             class="weather-icon-large">
-                        <p class="weather-description" th:text="${weather?.weatherDescription ?: 'Weather Description'}">Weather Description</p>
-                    </div>
-                    <div class="temperature-section">
-                        <span class="temperature-main" th:text="${weather?.tempValue ?: 25} + '°C'">25°C</span>
-                        <p class="feels-like">Feels like <span th:text="${weather?.feelsLikeValue ?: 27} + '°C'">27°C</span></p>
-                        <p class="weather-main-text" th:text="${weather?.weatherMain ?: 'Clear'}">Clear</p>
-                    </div>
+        <main class="weather-card">
+            <div class="weather-main">
+                <div class="weather-icon-section">
+                    <img th:src="${weather?.weatherIcon ?: 'https://openweathermap.org/img/wn/01n@2x.png'}"
+                         th:alt="${weather?.weatherDescription ?: 'Weather icon'}"
+                         class="weather-icon-large">
+                    <p class="weather-description" th:text="${weather?.weatherDescription ?: 'overcast clouds'}">overcast clouds</p>
                 </div>
-            </div>
-
-            <!-- Weather Details Grid -->
-            <div class="weather-details-grid">
-                <div class="detail-card">
-                    <div class="detail-icon">
-                        <i class="fas fa-eye"></i>
-                    </div>
-                    <div class="detail-content">
-                        <span class="detail-label">Visibility</span>
-                        <span class="detail-value" th:text="${weather?.visibility ?: 10} + ' km'">10 km</span>
-                    </div>
-                </div>
-
-                <div class="detail-card">
-                    <div class="detail-icon">
-                        <i class="fas fa-tint"></i>
-                    </div>
-                    <div class="detail-content">
-                        <span class="detail-label">Humidity</span>
-                        <span class="detail-value" th:text="${weather?.humidity ?: 65} + '%'">65%</span>
-                    </div>
-                </div>
-
-                <div class="detail-card">
-                    <div class="detail-icon">
-                        <i class="fas fa-thermometer-half"></i>
-                    </div>
-                    <div class="detail-content">
-                        <span class="detail-label">Pressure</span>
-                        <span class="detail-value" th:text="${weather?.pressure ?: 1013} + ' hPa'">1013 hPa</span>
-                    </div>
-                </div>
-
-                <div class="detail-card">
-                    <div class="detail-icon">
-                        <i class="fas fa-wind"></i>
-                    </div>
-                    <div class="detail-content">
-                        <span class="detail-label">Wind Speed</span>
-                        <span class="detail-value" th:text="${weather?.windSpeedValue ?: 15} + ' km/h'">15 km/h</span>
-                    </div>
-                </div>
-
-                <div class="detail-card">
-                    <div class="detail-icon">
-                        <i class="fas fa-sun"></i>
-                    </div>
-                    <div class="detail-content">
-                        <span class="detail-label">UV Index</span>
-                        <span class="detail-value" th:text="${weather?.uvi ?: 5}">5</span>
-                    </div>
-                </div>
-
-                <div class="detail-card">
-                    <div class="detail-icon">
-                        <i class="fas fa-compass"></i>
-                    </div>
-                    <div class="detail-content">
-                        <span class="detail-label">Wind Direction</span>
-                        <span class="detail-value" th:text="${weather?.windDegree ?: 180} + '°'">180°</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sun Times -->
-            <div class="sun-times">
-                <div class="sun-time-card">
-                    <div class="sun-icon">
-                        <i class="fas fa-sunrise"></i>
-                    </div>
-                    <div class="sun-info">
-                        <span class="sun-label">Sunrise</span>
-                        <span class="sun-value" th:text="${weather?.sunriseValue ?: '06:30 AM'}">06:30 AM</span>
-                    </div>
-                </div>
-                <div class="sun-time-card">
-                    <div class="sun-icon">
-                        <i class="fas fa-sunset"></i>
-                    </div>
-                    <div class="sun-info">
-                        <span class="sun-label">Sunset</span>
-                        <span class="sun-value" th:text="${weather?.sunsetValue ?: '07:45 PM'}">07:45 PM</span>
-                    </div>
+                <div class="temperature-section">
+                    <span class="temperature-main" th:text="${weather?.tempValue ?: 24} + '°C'">24°C</span>
+                    <p class="feels-like">Feels like <span th:text="${weather?.feelsLikeValue ?: 22} + '°C'">22°C</span></p>
+                    <p class="weather-main-text" th:text="${weather?.weatherMain ?: 'Clear'}">Clear</p>
                 </div>
             </div>
         </main>
 
-        <!-- Hourly Forecast Section -->
-        <section class="hourly-forecast">
-            <h2 class="section-title">
-                <i class="fas fa-clock"></i>
-                Hourly Forecast
-            </h2>
-            <div class="hourly-card">
-                <div class="hourly-item">
-                    <span class="hourly-time" th:text="${hourly?.timeValue ?: 'Now'}">Now</span>
-                    <img th:src="${hourly?.iconLink ?: 'https://openweathermap.org/img/wn/01d@2x.png'}"
-                         alt="Weather icon"
-                         class="hourly-icon">
-                    <span class="hourly-temp" th:text="${hourly?.tempValue ?: 25} + '°'">25°</span>
-                    <div class="hourly-details">
-                        <span class="hourly-wind">
-                            <i class="fas fa-wind"></i>
-                            <span th:text="${hourly?.windSpeedValue ?: 12} + ' km/h'">12 km/h</span>
-                        </span>
-                        <span class="hourly-rain">
-                            <i class="fas fa-cloud-rain"></i>
-                            <span th:text="${hourly?.rainPossibility ?: 20} + '%'">20%</span>
-                        </span>
-                    </div>
+        <!-- Weather Details Grid -->
+        <div class="weather-details-grid">
+            <div class="detail-card">
+                <div class="detail-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <div class="detail-content">
+                    <span class="detail-label">Visibility</span>
+                    <span class="detail-value" th:text="${weather?.visibility ?: 10} + ' km'">10 km</span>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-icon">
+                    <i class="fas fa-tint"></i>
+                </div>
+                <div class="detail-content">
+                    <span class="detail-label">Humidity</span>
+                    <span class="detail-value" th:text="${weather?.humidity ?: 94} + '%'">94%</span>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-icon">
+                    <i class="fas fa-thermometer-half"></i>
+                </div>
+                <div class="detail-content">
+                    <span class="detail-label">Pressure</span>
+                    <span class="detail-value" th:text="${weather?.pressure ?: 1001} + ' hPa'">1001 hPa</span>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-icon">
+                    <i class="fas fa-wind"></i>
+                </div>
+                <div class="detail-content">
+                    <span class="detail-label">Wind Speed</span>
+                    <span class="detail-value" th:text="${weather?.windSpeedValue ?: 3} + ' km/h'">3 km/h</span>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-icon">
+                    <i class="fas fa-sun"></i>
+                </div>
+                <div class="detail-content">
+                    <span class="detail-label">UV Index</span>
+                    <span class="detail-value" th:text="${weather?.uvi ?: 5}">5</span>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-icon">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <div class="detail-content">
+                    <span class="detail-label">Wind Direction</span>
+                    <span class="detail-value" th:text="${weather?.windDegree ?: 180} + '°'">180°</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sun Times -->
+        <div class="sun-times">
+            <div class="sun-time-card">
+                <div class="sun-icon">
+                    <i class="fas fa-sunrise"></i>
+                </div>
+                <div class="sun-info">
+                    <span class="sun-label">Sunrise</span>
+                    <span class="sun-value" th:text="${weather?.sunriseValue ?: '06:30 AM'}">06:30 AM</span>
+                </div>
+            </div>
+            <div class="sun-time-card">
+                <div class="sun-icon">
+                    <i class="fas fa-sunset"></i>
+                </div>
+                <div class="sun-info">
+                    <span class="sun-label">Sunset</span>
+                    <span class="sun-value" th:text="${weather?.sunsetValue ?: '07:45 PM'}">07:45 PM</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- FIXED HOURLY FORECAST SECTION -->
+        <section class="weather-card hourly-forecast">
+            <div class="hourly-forecast-header">
+                <h2 class="section-title">
+                    <i class="fas fa-clock"></i>
+                    Hourly Forecast
+                </h2>
+                <div class="forecast-location">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span id="forecastLocationName">Sehore, IN</span>
+                </div>
+            </div>
+
+            <div class="auto-refresh-toggle">
+                <span>Auto-refresh</span>
+                <div id="refreshToggle" class="refresh-switch">
+                </div>
+                <span id="refreshStatus">OFF</span>
+            </div>
+
+            <div class="hourly-scroll-container">
+                <div id="hourlyForecastContainer" class="hourly-items-container">
+                    <!-- Will be populated by JavaScript -->
                 </div>
             </div>
         </section>
 
         <!-- Daily Forecast Section -->
-        <section class="daily-forecast">
+        <section class="weather-card daily-forecast">
             <h2 class="section-title">
                 <i class="fas fa-calendar-day"></i>
                 Today's Temperature
@@ -449,21 +285,21 @@
             <div class="daily-card">
                 <div class="daily-temp-item">
                     <div class="temp-period">
-                        <i class="fas fa-sun morning-icon"></i>
+                        <i class="fas fa-sun"></i>
                         <span>Morning</span>
                     </div>
                     <span class="temp-value" th:text="${daily?.morningTemp ?: 18} + '°C'">18°C</span>
                 </div>
                 <div class="daily-temp-item">
                     <div class="temp-period">
-                        <i class="fas fa-sun day-icon"></i>
+                        <i class="fas fa-sun"></i>
                         <span>Day</span>
                     </div>
                     <span class="temp-value" th:text="${daily?.dayTemp ?: 25} + '°C'">25°C</span>
                 </div>
                 <div class="daily-temp-item">
                     <div class="temp-period">
-                        <i class="fas fa-moon night-icon"></i>
+                        <i class="fas fa-moon"></i>
                         <span>Night</span>
                     </div>
                     <span class="temp-value" th:text="${daily?.nightTemp ?: 15} + '°C'">15°C</span>
@@ -473,57 +309,6 @@
     </div>
 </div>
 
-<!-- Loading Overlay -->
-<div id="loadingOverlay" class="loading-overlay">
-    <div class="loading-spinner">
-        <i class="fas fa-spinner fa-spin"></i>
-        <p>Updating weather data...</p>
-    </div>
-</div>
-
-<script th:src="@{/js/weather-script.js}"></script>
-<script>
-    // Enhanced navigation functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        // Update active navigation link based on current page
-        updateActiveNavLink();
-
-        // Add click handlers for navigation
-        setupNavigationHandlers();
-    });
-
-    function updateActiveNavLink() {
-        const currentPath = window.location.pathname;
-        const navLinks = document.querySelectorAll('.nav-link');
-
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === currentPath) {
-                link.classList.add('active');
-            }
-        });
-    }
-
-    function setupNavigationHandlers() {
-        // Add smooth transitions for navigation
-        const navLinks = document.querySelectorAll('.nav-link, .quick-nav-item');
-
-        navLinks.forEach(link => {
-            link.addEventListener('click', function(e) {
-                // Show loading indicator for external navigation
-                if (this.getAttribute('href').startsWith('/business/')) {
-                    showLoadingOverlay();
-                }
-            });
-        });
-    }
-
-    function showLoadingOverlay() {
-        const overlay = document.getElementById('loadingOverlay');
-        if (overlay) {
-            overlay.style.display = 'flex';
-        }
-    }
-</script>
+<script src="/js/weather-dashboard.js"></script>
 </body>
 </html>
