@@ -1,10 +1,15 @@
 package com.example.weather.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "radar_data")
+@Getter
+@Setter
 public class RadarData {
 
     @Id
@@ -41,27 +46,7 @@ public class RadarData {
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 
-    // Missing methods: setLatitude and setLongitude
-    public Double getLatitude() { return latitude; }
-    public void setLatitude(Double latitude) { this.latitude = latitude; }
-
-    public Double getLongitude() { return longitude; }
-    public void setLongitude(Double longitude) { this.longitude = longitude; }
-
-    public Double getPrecipitation() { return precipitation; }
-    public void setPrecipitation(Double precipitation) { this.precipitation = precipitation; }
-
-    public String getIntensity() { return intensity; }
-    public void setIntensity(String intensity) { this.intensity = intensity; }
-
-    public LocalDateTime getTimestamp() { return timestamp; }
-    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
-
-    public String getRadarUrl() { return radarUrl; }
-    public void setRadarUrl(String radarUrl) { this.radarUrl = radarUrl; }
 
     @Override
     public String toString() {

@@ -10,7 +10,7 @@
 
 <body>
 <div layout:fragment="content">
-    <!-- Hero Section - Matching the gradient theme -->
+    <!-- Hero Section -->
     <section class="hero-section" style="padding: 80px 20px 60px; background: linear-gradient(135deg, #4a90e2, #50c878); color: white;">
         <div style="max-width: 1100px; margin: auto; text-align: center;">
             <div style="margin-bottom: 20px;">
@@ -34,108 +34,33 @@
     <!-- Active Alerts Section -->
     <section class="active-alerts" style="padding: 80px 20px; background: #f5f7fa;">
         <div style="max-width: 1200px; margin: auto;">
-            <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 20px; color: #2c3e50; font-weight: 300;">Active Weather Alerts</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-size: 2.5rem; color: #2c3e50; font-weight: 300; margin: 0;">Active Weather Alerts</h2>
+                <div style="display: flex; align-items: center; gap: 15px;">
+
+                    <div id="last-updated" style="color: #7f8c8d; font-size: 0.9rem;">
+                        <i class="fas fa-clock"></i> Loading...
+                    </div>
+                    <button id="refresh-alerts" style="background: #4a90e2; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+
             <p style="text-align: center; font-size: 1.1rem; margin-bottom: 60px; color: #7f8c8d; max-width: 600px; margin-left: auto; margin-right: auto; font-weight: 300;">
                 Current weather warnings and watches in effect. Click on any alert for detailed information and safety recommendations.
             </p>
 
-            <!-- Sample Active Alerts -->
-            <div style="display: flex; flex-direction: column; gap: 25px;">
-                <!-- Severe Alert -->
-                <div style="background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 4px solid #e74c3c;">
-                    <div style="display: flex; align-items: flex-start; gap: 20px;">
-                        <div style="background: #e74c3c; color: white; padding: 12px; border-radius: 50%; min-width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-bolt" style="font-size: 1.2rem;"></i>
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                                <h3 style="font-size: 1.4rem; margin: 0; color: #2c3e50; font-weight: 500;">Severe Thunderstorm Warning</h3>
-                                <span style="background: #e74c3c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">ACTIVE</span>
-                            </div>
-                            <p style="color: #7f8c8d; margin-bottom: 15px; font-size: 0.9rem;">
-                                <i class="fas fa-map-marker-alt"></i> New York County, NY •
-                                <i class="fas fa-clock"></i> Until 8:00 PM EST
-                            </p>
-                            <p style="color: #5a6c7d; margin-bottom: 20px; line-height: 1.6;">
-                                Severe thunderstorms with damaging winds up to 70 mph and quarter-size hail possible.
-                                Heavy rainfall may cause localized flooding. Seek shelter immediately.
-                            </p>
-                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                                <span style="background: #f5f7fa; color: #2c3e50; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
-                                    <i class="fas fa-wind"></i> 70 mph winds
-                                </span>
-                                <span style="background: #f5f7fa; color: #2c3e50; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
-                                    <i class="fas fa-cloud-rain"></i> Heavy rain
-                                </span>
-                                <span style="background: #f5f7fa; color: #2c3e50; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
-                                    <i class="fas fa-circle"></i> Quarter-size hail
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <!-- Loading State -->
+            <div id="alerts-loading" style="text-align: center; padding: 60px 20px;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 3rem; color: #4a90e2; margin-bottom: 20px;"></i>
+                <h3 style="font-size: 1.5rem; margin-bottom: 15px; color: #2c3e50; font-weight: 300;">Loading Weather Alerts...</h3>
+                <p style="color: #7f8c8d; font-size: 1rem;">Fetching the latest weather information for your area.</p>
+            </div>
 
-                <!-- Moderate Alert -->
-                <div style="background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 4px solid #f39c12;">
-                    <div style="display: flex; align-items: flex-start; gap: 20px;">
-                        <div style="background: #f39c12; color: white; padding: 12px; border-radius: 50%; min-width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-wind" style="font-size: 1.2rem;"></i>
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                                <h3 style="font-size: 1.4rem; margin: 0; color: #2c3e50; font-weight: 500;">High Wind Advisory</h3>
-                                <span style="background: #f39c12; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">WATCH</span>
-                            </div>
-                            <p style="color: #7f8c8d; margin-bottom: 15px; font-size: 0.9rem;">
-                                <i class="fas fa-map-marker-alt"></i> Manhattan, NY •
-                                <i class="fas fa-clock"></i> 6:00 PM - 11:00 PM EST
-                            </p>
-                            <p style="color: #5a6c7d; margin-bottom: 20px; line-height: 1.6;">
-                                Sustained winds of 25-35 mph with gusts up to 50 mph expected.
-                                Secure outdoor objects and use caution when driving high-profile vehicles.
-                            </p>
-                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                                <span style="background: #f5f7fa; color: #2c3e50; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
-                                    <i class="fas fa-wind"></i> 35 mph sustained
-                                </span>
-                                <span style="background: #f5f7fa; color: #2c3e50; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
-                                    <i class="fas fa-arrow-up"></i> 50 mph gusts
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Minor Alert -->
-                <div style="background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 4px solid #4a90e2;">
-                    <div style="display: flex; align-items: flex-start; gap: 20px;">
-                        <div style="background: #4a90e2; color: white; padding: 12px; border-radius: 50%; min-width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-cloud-rain" style="font-size: 1.2rem;"></i>
-                        </div>
-                        <div style="flex: 1;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                                <h3 style="font-size: 1.4rem; margin: 0; color: #2c3e50; font-weight: 500;">Flood Watch</h3>
-                                <span style="background: #4a90e2; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">MONITOR</span>
-                            </div>
-                            <p style="color: #7f8c8d; margin-bottom: 15px; font-size: 0.9rem;">
-                                <i class="fas fa-map-marker-alt"></i> Brooklyn, NY •
-                                <i class="fas fa-clock"></i> Tonight through Tomorrow Morning
-                            </p>
-                            <p style="color: #5a6c7d; margin-bottom: 20px; line-height: 1.6;">
-                                Heavy rainfall may cause flooding in low-lying and poor drainage areas.
-                                Monitor conditions and avoid driving through flooded roads.
-                            </p>
-                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                                <span style="background: #f5f7fa; color: #2c3e50; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
-                                    <i class="fas fa-cloud-rain"></i> Heavy rainfall
-                                </span>
-                                <span style="background: #f5f7fa; color: #2c3e50; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
-                                    <i class="fas fa-water"></i> Possible flooding
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <!-- Dynamic Alerts Container -->
+            <div id="alerts-container" style="display: none;">
+                <!-- Alerts will be dynamically inserted here -->
             </div>
 
             <!-- No Active Alerts State -->
@@ -145,6 +70,18 @@
                 <p style="color: #7f8c8d; font-size: 1.1rem; font-weight: 300;">
                     There are currently no weather warnings or watches in effect for your area.
                 </p>
+            </div>
+
+            <!-- Error State -->
+            <div id="alerts-error" style="display: none; text-align: center; padding: 60px 20px;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 4rem; color: #f39c12; margin-bottom: 20px;"></i>
+                <h3 style="font-size: 1.8rem; margin-bottom: 15px; color: #2c3e50; font-weight: 300;">Unable to Load Alerts</h3>
+                <p style="color: #7f8c8d; font-size: 1.1rem; font-weight: 300; margin-bottom: 20px;">
+                    There was an issue fetching the latest weather alerts. Please try again.
+                </p>
+                <button onclick="loadRealTimeAlerts()" style="background: #4a90e2; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer;">
+                    <i class="fas fa-redo"></i> Try Again
+                </button>
             </div>
         </div>
     </section>
@@ -253,7 +190,7 @@
                 </div>
 
                 <div style="margin-top: 30px;">
-                    <button style="background: #4a90e2; color: white; padding: 12px 30px; border: none; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer;">
+                    <button onclick="saveNotificationSettings()" style="background: #4a90e2; color: white; padding: 12px 30px; border: none; border-radius: 6px; font-size: 1rem; font-weight: 500; cursor: pointer;">
                         Save Notification Preferences
                     </button>
                 </div>
@@ -292,29 +229,214 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Simulate real-time alert updates
-        setInterval(function() {
-            updateAlertTimestamps();
-        }, 60000); // Update every minute
+    let alertsData = [];
+    let refreshInterval;
 
-        // Add click handlers for alert cards
-        document.querySelectorAll('.alert-card').forEach(card => {
-            card.style.cursor = 'pointer';
+    document.addEventListener('DOMContentLoaded', function() {
+        loadRealTimeAlerts();
+
+        // Set up auto-refresh every 15 minutes
+        refreshInterval = setInterval(loadRealTimeAlerts, 15 * 60 * 1000);
+
+        // Manual refresh button
+        document.getElementById('refresh-alerts').addEventListener('click', function() {
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+            loadRealTimeAlerts();
+        });
+    });
+
+    async function loadRealTimeAlerts() {
+        try {
+            showLoadingState();
+
+            // Get user's location (with fallback)
+            const position = await getCurrentLocation();
+            const lat = position?.coords?.latitude || 40.7128;
+            const lon = position?.coords?.longitude || -74.0060;
+
+            console.log(`Fetching alerts for location: ${lat}, ${lon}`);
+
+            const response = await fetch(`/business/api/alerts/real-time?lat=${lat}&lon=${lon}`);
+            const data = await response.json();
+
+            if (data.success) {
+                alertsData = data.alerts;
+                displayAlerts(data.alerts);
+                updateLastUpdatedTime(data.lastUpdated);
+
+                console.log(`Loaded ${data.alerts.length} alerts`);
+            } else {
+                showErrorState();
+            }
+
+        } catch (error) {
+            console.error('Error loading alerts:', error);
+            showErrorState();
+        } finally {
+            // Reset refresh button
+            const refreshBtn = document.getElementById('refresh-alerts');
+            refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+        }
+    }
+
+    function getCurrentLocation() {
+        return new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+                resolve(null);
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(resolve, () => resolve(null), {
+                timeout: 5000,
+                enableHighAccuracy: false
+            });
+        });
+    }
+
+    function showLoadingState() {
+        document.getElementById('alerts-loading').style.display = 'block';
+        document.getElementById('alerts-container').style.display = 'none';
+        document.getElementById('no-alerts').style.display = 'none';
+        document.getElementById('alerts-error').style.display = 'none';
+    }
+
+    function showErrorState() {
+        document.getElementById('alerts-loading').style.display = 'none';
+        document.getElementById('alerts-container').style.display = 'none';
+        document.getElementById('no-alerts').style.display = 'none';
+        document.getElementById('alerts-error').style.display = 'block';
+    }
+
+    function displayAlerts(alerts) {
+        const container = document.getElementById('alerts-container');
+        const noAlertsDiv = document.getElementById('no-alerts');
+        const loadingDiv = document.getElementById('alerts-loading');
+        const errorDiv = document.getElementById('alerts-error');
+
+        // Hide other states
+        loadingDiv.style.display = 'none';
+        errorDiv.style.display = 'none';
+
+        if (alerts.length === 0) {
+            container.style.display = 'none';
+            noAlertsDiv.style.display = 'block';
+            return;
+        }
+
+        noAlertsDiv.style.display = 'none';
+        container.style.display = 'block';
+
+        // Generate HTML for alerts
+        container.innerHTML = '<div style="display: flex; flex-direction: column; gap: 25px;">' +
+            alerts.map(alert => createAlertHTML(alert)).join('') +
+            '</div>';
+
+        // Add click handlers
+        container.querySelectorAll('.alert-card').forEach(card => {
             card.addEventListener('click', function() {
-                // Add visual feedback
                 this.style.transform = 'scale(0.98)';
                 setTimeout(() => {
                     this.style.transform = 'scale(1)';
                 }, 150);
             });
         });
-    });
-
-    function updateAlertTimestamps() {
-        // This would typically fetch real alert data from your API
-        console.log('Updating alert timestamps...');
     }
+
+    function createAlertHTML(alert) {
+        const expiresDate = new Date(alert.expires);
+        const effectiveDate = new Date(alert.effective);
+        const timeString = formatAlertTime(effectiveDate, expiresDate);
+
+        return `
+            <div class="alert-card" style="background: white; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-left: 4px solid ${alert.color}; cursor: pointer; transition: transform 0.2s;">
+                <div style="display: flex; align-items: flex-start; gap: 20px;">
+                    <div style="background: ${alert.color}; color: white; padding: 12px; border-radius: 50%; min-width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                        <i class="${alert.icon}" style="font-size: 1.2rem;"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                            <h3 style="font-size: 1.4rem; margin: 0; color: #2c3e50; font-weight: 500;">${alert.title}</h3>
+                            <span style="background: ${alert.color}; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">${alert.status}</span>
+                        </div>
+                        <p style="color: #7f8c8d; margin-bottom: 15px; font-size: 0.9rem;">
+                            <i class="fas fa-map-marker-alt"></i> ${alert.areas || 'Local Area'} •
+                            <i class="fas fa-clock"></i> ${timeString}
+                        </p>
+                        <p style="color: #5a6c7d; margin-bottom: 20px; line-height: 1.6;">
+                            ${alert.description}
+                        </p>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <span style="background: #f5f7fa; color: #2c3e50; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
+                                <i class="fas fa-exclamation-triangle"></i> ${alert.severity.toUpperCase()}
+                            </span>
+                            <span style="background: #f5f7fa; color: #2c3e50; padding: 6px 12px; border-radius: 15px; font-size: 0.8rem;">
+                                <i class="fas fa-building"></i> ${alert.senderName}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function formatAlertTime(effective, expires) {
+        const now = new Date();
+        const effectiveStr = effective > now ? `Starts ${formatTime(effective)}` : 'Active';
+        const expiresStr = `Until ${formatTime(expires)}`;
+        return `${effectiveStr} • ${expiresStr}`;
+    }
+
+    function formatTime(date) {
+        return date.toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+        });
+    }
+
+    function updateLastUpdatedTime(timestamp) {
+        const lastUpdatedDiv = document.getElementById('last-updated');
+        const date = new Date(timestamp);
+        lastUpdatedDiv.innerHTML = `<i class="fas fa-clock"></i> Updated ${date.toLocaleTimeString()}`;
+    }
+
+    function saveNotificationSettings() {
+        const settings = {
+            emailAlerts: document.querySelector('input[type="checkbox"]:nth-of-type(1)').checked,
+            smsAlerts: document.querySelector('input[type="checkbox"]:nth-of-type(2)').checked,
+            pushNotifications: document.querySelector('input[type="checkbox"]:nth-of-type(3)').checked,
+            voiceCalls: document.querySelector('input[type="checkbox"]:nth-of-type(4)').checked
+        };
+
+        fetch('/business/api/alerts/notifications', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(settings)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Notification settings saved successfully!');
+            } else {
+                alert('Error saving settings. Please try again.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error saving settings. Please try again.');
+        });
+    }
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', function() {
+        if (refreshInterval) {
+            clearInterval(refreshInterval);
+        }
+    });
 </script>
 </body>
 </html>

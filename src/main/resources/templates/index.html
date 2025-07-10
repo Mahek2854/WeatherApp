@@ -4,14 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/weather-dashboard.css">
+
+    <!-- External CSS File -->
+    <link rel="stylesheet" th:href="@{/css/weather-dashboard.css}">
+
+    <!-- Inline CSS as fallback -->
+
 </head>
 <body>
 <!-- Video Background -->
 <video autoplay muted loop class="video-background">
-    <source src="/Images/background.mp4" type="video/mp4">
+    <source th:src="@{/Images/background.mp4}" type="video/mp4">
     Your browser does not support the video tag.
 </video>
 
@@ -23,7 +28,7 @@
     </a>
 
     <div class="nav-links">
-        <a href="/weather-detailed" class="nav-link active">
+        <a href="/business/weather-detailed" class="nav-link active">
             <i class="fas fa-thermometer-half"></i>
             <span>Detailed View</span>
         </a>
@@ -122,6 +127,7 @@
     <!-- Menu Button -->
     <button id="menuBtn" class="menu-btn">
         <i class="fas fa-bars"></i>
+        Menu
     </button>
 
     <div class="weather-container">
@@ -133,7 +139,11 @@
                     <span th:text="${location?.cityName ?: 'Sehore'}">Sehore</span>,
                     <span th:text="${location?.country ?: 'IN'}">IN</span>
                 </h1>
-                <p class="current-time" th:text="${location?.currentDateTime ?: 'Wednesday, July 2, 2025 at 10:08 PM'}">Wednesday, July 2, 2025 at 10:08 PM</p>
+                <p class="current-time" th:text="${location?.currentDateTime ?: 'Wednesday, July 10, 2025 at 10:08 PM'}">Wednesday, July 10, 2025 at 10:08 PM</p>
+                <div class="data-source-indicator">
+                    <i class="fas fa-wifi"></i>
+                    <span>Live Data from OpenWeatherMap API</span>
+                </div>
             </div>
             <div class="header-actions">
                 <button id="searchToggle" class="btn-search">
@@ -151,7 +161,7 @@
         <main class="weather-card">
             <div class="weather-main">
                 <div class="weather-icon-section">
-                    <img th:src="${weather?.weatherIcon ?: 'https://openweathermap.org/img/wn/01n@2x.png'}"
+                    <img th:src="'https://openweathermap.org/img/wn/' + ${weather?.weatherIcon ?: '01n'} + '@2x.png'"
                          th:alt="${weather?.weatherDescription ?: 'Weather icon'}"
                          class="weather-icon-large">
                     <p class="weather-description" th:text="${weather?.weatherDescription ?: 'overcast clouds'}">overcast clouds</p>
@@ -249,7 +259,7 @@
             </div>
         </div>
 
-        <!-- FIXED HOURLY FORECAST SECTION -->
+        <!-- REAL-TIME HOURLY FORECAST SECTION -->
         <section class="weather-card hourly-forecast">
             <div class="hourly-forecast-header">
                 <h2 class="section-title">
@@ -264,14 +274,17 @@
 
             <div class="auto-refresh-toggle">
                 <span>Auto-refresh</span>
-                <div id="refreshToggle" class="refresh-switch">
-                </div>
+                <div id="refreshToggle" class="refresh-switch"></div>
                 <span id="refreshStatus">OFF</span>
             </div>
 
             <div class="hourly-scroll-container">
                 <div id="hourlyForecastContainer" class="hourly-items-container">
-                    <!-- Will be populated by JavaScript -->
+                    <!-- Will be populated by JavaScript with REAL API data -->
+                    <div class="loading-state">
+                        <i class="fas fa-spinner"></i>
+                        <p>Loading real-time forecast data...</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -306,9 +319,24 @@
                 </div>
             </div>
         </section>
+
+        <!-- API Status Indicator -->
+        <div class="api-status-card weather-card">
+            <div class="api-status-content">
+                <div class="api-status-icon">
+                    <i class="fas fa-satellite-dish"></i>
+                </div>
+                <div class="api-status-info">
+                    <h4>Real-Time Weather Data</h4>
+                    <p>Data sourced directly from OpenWeatherMap API</p>
+                    <small>Last updated: <span id="lastUpdateTime" th:text="${#temporals.format(#temporals.createNow(), 'HH:mm:ss')}">Now</span></small>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<script src="/js/weather-dashboard.js"></script>
+
+<script th:src="@{/js/weather-dashboard.js}"></script>
 </body>
 </html>

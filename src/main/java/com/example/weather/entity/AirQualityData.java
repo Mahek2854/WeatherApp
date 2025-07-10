@@ -1,10 +1,15 @@
 package com.example.weather.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "air_quality_data")
+@Getter
+@Setter
 public class AirQualityData {
 
     @Id
@@ -52,43 +57,4 @@ public class AirQualityData {
         this.timestamp = LocalDateTime.now();
     }
 
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public Double getLatitude() { return latitude; }
-    public void setLatitude(Double latitude) { this.latitude = latitude; }
-
-    public Double getLongitude() { return longitude; }
-    public void setLongitude(Double longitude) { this.longitude = longitude; }
-
-    public Integer getAqi() { return aqi; }
-    public void setAqi(Integer aqi) { this.aqi = aqi; }
-
-    public Double getCo() { return co; }
-    public void setCo(Double co) { this.co = co; }
-
-    public Double getNo() { return no; }
-    public void setNo(Double no) { this.no = no; }
-
-    public Double getNo2() { return no2; }
-    public void setNo2(Double no2) { this.no2 = no2; }
-
-    public Double getO3() { return o3; }
-    public void setO3(Double o3) { this.o3 = o3; }
-
-    public Double getSo2() { return so2; }
-    public void setSo2(Double so2) { this.so2 = so2; }
-
-    public Double getPm25() { return pm25; }
-    public void setPm25(Double pm25) { this.pm25 = pm25; }
-
-    public Double getPm10() { return pm10; }
-    public void setPm10(Double pm10) { this.pm10 = pm10; }
-
-    public Double getNh3() { return nh3; }
-    public void setNh3(Double nh3) { this.nh3 = nh3; }
-
-    public LocalDateTime getTimestamp() { return timestamp; }
-    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
 }
