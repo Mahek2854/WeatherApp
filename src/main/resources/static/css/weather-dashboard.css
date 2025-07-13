@@ -56,12 +56,12 @@ body {
 
 .nav-brand:hover {
   transform: scale(1.05);
-  color: #ffd700;
+  color: #87ceeb;
 }
 
 .nav-brand i {
   font-size: 2rem;
-  color: #ffd700;
+  color: #87ceeb;
 }
 
 .nav-links {
@@ -90,9 +90,9 @@ body {
 }
 
 .nav-link.active {
-  color: #ffd700;
-  background: rgba(255, 215, 0, 0.1);
-  border-color: rgba(255, 215, 0, 0.3);
+  color: #87ceeb;
+  background: rgba(135, 206, 235, 0.1);
+  border-color: rgba(135, 206, 235, 0.3);
   font-weight: 600;
 }
 
@@ -130,7 +130,7 @@ body {
 .sidebar-header h3 {
   font-size: 1.4rem;
   font-weight: 600;
-  color: #ffd700;
+  color: #87ceeb;
 }
 
 .close-btn {
@@ -182,9 +182,9 @@ body {
 
 .search-input:focus {
   outline: none;
-  border-color: #ffd700;
+  border-color: #87ceeb;
   background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
+  box-shadow: 0 0 0 3px rgba(135, 206, 235, 0.1);
 }
 
 .search-input::placeholder {
@@ -194,16 +194,16 @@ body {
 .search-btn {
   padding: 12px 16px;
   border-radius: 10px;
-  background: rgba(255, 215, 0, 0.2);
-  border: 1px solid rgba(255, 215, 0, 0.4);
-  color: #ffd700;
+  background: rgba(135, 206, 235, 0.2);
+  border: 1px solid rgba(135, 206, 235, 0.4);
+  color: #87ceeb;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .search-btn:hover {
-  background: rgba(255, 215, 0, 0.3);
+  background: rgba(135, 206, 235, 0.3);
   transform: scale(1.05);
 }
 
@@ -255,7 +255,7 @@ body {
 }
 
 .autocomplete-item i {
-  color: #ffd700;
+  color: #87ceeb;
   width: 16px;
   flex-shrink: 0;
 }
@@ -387,7 +387,7 @@ body {
 
 .recent-location-item i,
 .city-btn i {
-  color: #ffd700;
+  color: #87ceeb;
   width: 16px;
 }
 
@@ -485,14 +485,14 @@ body {
   align-items: center;
   gap: 15px;
   font-weight: 700;
-  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  background: linear-gradient(135deg, #87ceeb, #add8e6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .city-name i {
-  color: #ffd700;
+  color: #87ceeb;
   font-size: 2rem;
 }
 
@@ -620,11 +620,11 @@ body {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: rgba(255, 215, 0, 0.2);
+  background: rgba(135, 206, 235, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffd700;
+  color: #87ceeb;
   font-size: 1.5rem;
   flex-shrink: 0;
 }
@@ -677,11 +677,11 @@ body {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: rgba(255, 193, 7, 0.2);
+  background: rgba(135, 206, 235, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffc107;
+  color: #87ceeb;
   font-size: 1.5rem;
 }
 
@@ -716,7 +716,7 @@ body {
 }
 
 .section-title i {
-  color: #ffd700;
+  color: #87ceeb;
   font-size: 1.6rem;
 }
 
@@ -829,9 +829,9 @@ body {
 }
 
 .hourly-item.current-hour {
-  background: rgba(255, 215, 0, 0.2);
-  border-color: rgba(255, 215, 0, 0.4);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  background: rgba(135, 206, 235, 0.2);
+  border-color: rgba(135, 206, 235, 0.4);
+  box-shadow: 0 0 20px rgba(135, 206, 235, 0.3);
 }
 
 .hourly-time {
@@ -870,7 +870,7 @@ body {
 }
 
 .hourly-detail-item i {
-  color: #ffd700;
+  color: #87ceeb;
   width: 12px;
 }
 
@@ -909,7 +909,7 @@ body {
 }
 
 .temp-period i {
-  color: #ffd700;
+  color: #87ceeb;
   font-size: 1.2rem;
 }
 
@@ -1090,7 +1090,7 @@ body {
   font-size: 3rem;
   margin-bottom: 20px;
   display: block;
-  color: #ffd700;
+  color: #87ceeb;
 }
 
 .loading-state i {

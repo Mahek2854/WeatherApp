@@ -632,7 +632,7 @@ function hideAutocomplete() {
 
 // Manual test function for debugging
 function testHourlyForecast() {
-  console.log("🧪 Testing hourly forecast manually...")
+  console.log(" Testing hourly forecast manually...")
   loadHourlyForecast()
 }
 

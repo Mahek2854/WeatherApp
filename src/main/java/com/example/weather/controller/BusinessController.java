@@ -32,10 +32,11 @@ public class BusinessController {
     @Autowired
     private CommuteRecommendationService commuteRecommendationService;
 
+    // This RestTemplate is for OpenWeatherMap (autowired by Spring)
     @Autowired
     private RestTemplate restTemplate;
 
-    // Use the API key from your properties file
+    // Use the API key from your properties file for OpenWeatherMap
     @Value("${openweathermap.api.key}")
     private String apiKey;
 
@@ -44,6 +45,16 @@ public class BusinessController {
 
     @Value("${weather.use.real.api:true}")
     private boolean useRealApi;
+
+    // WeatherAPI.com properties
+    @Value("${weatherapi.base-url}")
+    private String weatherApiBaseUrl;
+
+    @Value("${weatherapi.key}")
+    private String weatherApiKey;
+
+    // This RestTemplate is specifically for WeatherAPI.com (as you clarified)
+    private final RestTemplate weatherApiRestTemplate = new RestTemplate();
 
     @GetMapping("/")
     public String businessHome(Model model) {
@@ -68,7 +79,7 @@ public class BusinessController {
 
         try {
             if (useRealApi) {
-                // Fetch REAL weather data from OpenWeatherMap API
+                // Fetch REAL weather data from OpenWeatherMap API using the autowired restTemplate
                 Map<String, Object> realWeatherData = fetchRealWeatherData(city, country);
 
                 if (realWeatherData != null) {
@@ -101,13 +112,13 @@ public class BusinessController {
 
     private Map<String, Object> fetchRealWeatherData(String city, String country) {
         try {
-            // Build API URL using properties
+            // Build API URL using properties for OpenWeatherMap
             String cityQuery = country.isEmpty() ? city : city + "," + country;
             String url = baseApiUrl + "/weather?q=" + cityQuery + "&appid=" + apiKey + "&units=metric";
 
             System.out.println("Calling OpenWeatherMap API: " + url);
 
-            // Make API call
+            // Make API call using the autowired restTemplate
             Map<String, Object> apiResponse = restTemplate.getForObject(url, Map.class);
 
             if (apiResponse == null) {
@@ -246,6 +257,7 @@ public class BusinessController {
         model.addAttribute("pageTitle", "Weather Details - " + city + " - WeatherPro Business");
     }
 
+    // This is your existing forecast endpoint. We will modify it to use WeatherAPI.com
     @GetMapping("/api/weather/forecast")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getForecast(
@@ -258,6 +270,7 @@ public class BusinessController {
             Map<String, Object> response = new HashMap<>();
 
             if (useRealApi) {
+                // Call the updated fetchRealHourlyForecast method which now uses WeatherAPI.com
                 List<Map<String, Object>> hourlyForecast = fetchRealHourlyForecast(city, country, lat, lon);
 
                 Map<String, Object> forecastData = new HashMap<>();
@@ -288,71 +301,78 @@ public class BusinessController {
     private List<Map<String, Object>> fetchRealHourlyForecast(String city, String country, Double lat, Double lon) {
         try {
             String url;
+            String locationQuery;
+
             if (lat != null && lon != null) {
-                url = baseApiUrl + "/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&units=metric";
+                locationQuery = lat + "," + lon;
             } else {
-                String cityQuery = country != null && !country.isEmpty() ? city + "," + country : city;
-                url = baseApiUrl + "/forecast?q=" + cityQuery + "&appid=" + apiKey + "&units=metric";
+                locationQuery = country != null && !country.isEmpty() ? city + "," + country : city;
             }
 
-            System.out.println("Calling forecast API: " + url);
+            // Use WeatherAPI.com for hourly forecast
+            url = weatherApiBaseUrl + "/forecast.json?key=" + weatherApiKey + "&q=" + locationQuery + "&days=1";
 
-            Map<String, Object> apiResponse = restTemplate.getForObject(url, Map.class);
+            System.out.println("Calling WeatherAPI.com forecast API: " + url);
+
+            // Make API call using the dedicated weatherApiRestTemplate
+            Map<String, Object> apiResponse = weatherApiRestTemplate.getForObject(url, Map.class);
 
             if (apiResponse == null) {
-                throw new RuntimeException("No forecast response from API");
+                throw new RuntimeException("No forecast response from WeatherAPI.com");
             }
 
-            List<Map<String, Object>> forecastList = (List<Map<String, Object>>) apiResponse.get("list");
             List<Map<String, Object>> hourlyForecast = new ArrayList<>();
 
-            // Process first 24 hours
-            for (int i = 0; i < Math.min(24, forecastList.size()); i++) {
-                Map<String, Object> item = forecastList.get(i);
-                Map<String, Object> hourData = new HashMap<>();
+            Map<String, Object> forecast = (Map<String, Object>) apiResponse.get("forecast");
+            if (forecast != null) {
+                List<Map<String, Object>> forecastday = (List<Map<String, Object>>) forecast.get("forecastday");
+                if (forecastday != null && !forecastday.isEmpty()) {
+                    List<Map<String, Object>> hourList = (List<Map<String, Object>>) forecastday.get(0).get("hour");
 
-                // Time
-                Long dt = ((Number) item.get("dt")).longValue();
-                String timeStr = i == 0 ? "NOW" :
-                        Instant.ofEpochSecond(dt)
-                                .atZone(ZoneId.systemDefault())
-                                .format(DateTimeFormatter.ofPattern("HH:mm"));
-                hourData.put("time", timeStr);
+                    if (hourList != null) {
+                        // Process all available hours for the current day
+                        for (Map<String, Object> item : hourList) {
+                            Map<String, Object> hourData = new HashMap<>();
 
-                // Temperature
-                Map<String, Object> main = (Map<String, Object>) item.get("main");
-                hourData.put("temp", Math.round(((Number) main.get("temp")).doubleValue()));
+                            // Time (WeatherAPI.com provides "YYYY-MM-DD HH:mm" format)
+                            String timeFull = (String) item.get("time");
+                            String timeStr = LocalDateTime.parse(timeFull, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+                                    .format(DateTimeFormatter.ofPattern("HH:mm"));
+                            hourData.put("time", timeStr);
 
-                // Weather icon
-                List<Map<String, Object>> weather = (List<Map<String, Object>>) item.get("weather");
-                hourData.put("icon", weather.get(0).get("icon"));
+                            // Temperature
+                            hourData.put("temp", Math.round(((Number) item.get("temp_c")).doubleValue()));
 
-                // Precipitation probability
-                Object pop = item.get("pop");
-                hourData.put("precipitation", pop != null ? Math.round(((Number) pop).doubleValue() * 100) : 0);
+                            // Weather icon
+                            Map<String, Object> condition = (Map<String, Object>) item.get("condition");
+                            if (condition != null) {
+                                // WeatherAPI.com provides full URL for icon, use it directly
+                                hourData.put("icon", condition.get("icon"));
+                            } else {
+                                hourData.put("icon", "//cdn.weatherapi.com/weather/64x64/day/113.png"); // Default clear icon
+                            }
 
-                // Wind speed
-                Map<String, Object> wind = (Map<String, Object>) item.get("wind");
-                if (wind != null && wind.get("speed") != null) {
-                    double windSpeedMs = ((Number) wind.get("speed")).doubleValue();
-                    hourData.put("windSpeed", Math.round(windSpeedMs * 3.6)); // Convert to km/h
-                } else {
-                    hourData.put("windSpeed", 0);
+                            // Precipitation probability (chance_of_rain is percentage)
+                            hourData.put("precipitation", ((Number) item.get("chance_of_rain")).intValue());
+
+                            // Wind speed (wind_kph is already in km/h)
+                            hourData.put("windSpeed", Math.round(((Number) item.get("wind_kph")).doubleValue()));
+
+                            // Visibility (vis_km is already in km)
+                            hourData.put("visibility", Math.round(((Number) item.get("vis_km")).doubleValue()));
+
+                            hourlyForecast.add(hourData);
+                        }
+                    }
                 }
-
-                // Visibility
-                Object visibility = item.get("visibility");
-                hourData.put("visibility", visibility != null ?
-                        Math.round(((Number) visibility).doubleValue() / 1000.0) : 10);
-
-                hourlyForecast.add(hourData);
             }
 
-            System.out.println("✅ Fetched " + hourlyForecast.size() + " hours of real forecast data");
+            System.out.println("✅ Fetched " + hourlyForecast.size() + " hours of real forecast data from WeatherAPI.com");
             return hourlyForecast;
 
         } catch (Exception e) {
-            System.err.println("❌ Failed to fetch real forecast data: " + e.getMessage());
+            System.err.println("❌ Failed to fetch real forecast data from WeatherAPI.com: " + e.getMessage());
+            e.printStackTrace(); // Print stack trace for debugging
             return new ArrayList<>();
         }
     }
@@ -392,5 +412,181 @@ public class BusinessController {
             errorResponse.put("error", e.getMessage());
             return ResponseEntity.ok(errorResponse);
         }
+    }
+
+    @GetMapping("/safety")
+    public String safety(Model model) {
+        model.addAttribute("pageTitle", "Weather Safety Center - WeatherPro Business");
+        return "safety";
+    }
+
+    @GetMapping("/alerts")
+    public String alerts(Model model) {
+        model.addAttribute("pageTitle", "Weather Alerts & Warnings - WeatherPro Business");
+        return "alerts";
+    }
+
+    // NEW: API endpoint for current weather data for the dashboard
+    @GetMapping("/api/weather/current-data")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getCurrentWeatherDataForDashboard(
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) String country,
+            @RequestParam(required = false) Double lat,
+            @RequestParam(required = false) Double lon) {
+        try {
+            System.out.println("🌤️ Dashboard current weather API called for: " + (city != null ? city : "coords " + lat + "," + lon));
+
+            WeatherData weather = null;
+            if (lat != null && lon != null) {
+                weather = weatherService.getWeatherByCoordinates(lat, lon);
+            } else if (city != null && !city.trim().isEmpty()) {
+                weather = weatherService.getCompleteWeatherData(city, country != null ? country : "");
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            if (weather != null) {
+                response.put("success", true);
+                response.put("data", weather);
+                System.out.println("✅ Dashboard current weather data retrieved successfully");
+            } else {
+                response.put("success", false);
+                response.put("error", "No weather data found for the specified location.");
+                System.err.println("❌ No dashboard current weather data found");
+            }
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            System.err.println("❌ Error in dashboard current weather API: " + e.getMessage());
+            e.printStackTrace();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to fetch current weather data: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+    }
+
+    @GetMapping("/api/alerts/real-time")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getRealTimeAlerts(
+            @RequestParam(required = false) Double lat,
+            @RequestParam(required = false) Double lon) {
+
+        try {
+            System.out.println("🚨 Real-time alerts API called with lat: " + lat + ", lon: " + lon);
+
+            Map<String, Object> response = new HashMap<>();
+            List<Map<String, Object>> alerts = new ArrayList<>();
+
+            if (useRealApi && lat != null && lon != null) {
+                // Use WeatherAPI.com for real alerts
+                alerts = fetchWeatherApiAlerts(lat, lon);
+            } else {
+                // Fallback to mock data for testing or if API is disabled/coordinates missing
+                alerts = generateMockAlerts(lat, lon);
+            }
+
+            response.put("success", true);
+            response.put("alerts", alerts);
+            response.put("lastUpdated", LocalDateTime.now().toString());
+
+            System.out.println("✅ Returning " + alerts.size() + " alerts");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            System.err.println("❌ Error in alerts API: " + e.getMessage());
+            e.printStackTrace();
+
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.ok(errorResponse);
+        }
+    }
+
+    // Add this helper method to generate mock alerts data
+    private List<Map<String, Object>> generateMockAlerts(Double lat, Double lon) {
+        List<Map<String, Object>> alerts = new ArrayList<>();
+
+        // Sample alert 1
+        Map<String, Object> alert1 = new HashMap<>();
+        alert1.put("title", "Severe Thunderstorm Warning");
+        alert1.put("description", "A severe thunderstorm capable of producing damaging winds in excess of 60 mph and quarter size hail is approaching the area. Take shelter immediately.");
+        alert1.put("status", "WARNING");
+        alert1.put("severity", "severe");
+        alert1.put("color", "#e74c3c");
+        alert1.put("icon", "fas fa-bolt");
+        alert1.put("areas", "Downtown Area, Business District");
+        alert1.put("effective", LocalDateTime.now().minusMinutes(15).toString());
+        alert1.put("expires", LocalDateTime.now().plusHours(2).toString());
+        alert1.put("senderName", "National Weather Service");
+
+        // Sample alert 2
+        Map<String, Object> alert2 = new HashMap<>();
+        alert2.put("title", "High Wind Watch");
+        alert2.put("description", "Sustained winds of 35 to 45 mph with gusts up to 65 mph are possible. Secure loose outdoor items.");
+        alert2.put("status", "WATCH");
+        alert2.put("severity", "moderate");
+        alert2.put("color", "#f39c12");
+        alert2.put("icon", "fas fa-wind");
+        alert2.put("areas", "Metropolitan Area");
+        alert2.put("effective", LocalDateTime.now().plusHours(1).toString());
+        alert2.put("expires", LocalDateTime.now().plusHours(8).toString());
+        alert2.put("senderName", "National Weather Service");
+
+        alerts.add(alert1);
+        alerts.add(alert2);
+
+        return alerts;
+    }
+
+    // WeatherAPI.com integration method
+    @SuppressWarnings("unchecked")
+    private List<Map<String, Object>> fetchWeatherApiAlerts(Double lat, Double lon) {
+        List<Map<String, Object>> alerts = new ArrayList<>();
+
+        try {
+            String url = weatherApiBaseUrl + "/alerts.json?key=" + weatherApiKey +
+                    "&q=" + lat + "," + lon + "&aqi=no";
+
+            System.out.println("🌐 Calling WeatherAPI Alerts: " + url);
+
+            // Use the dedicated weatherApiRestTemplate for alerts
+            Map<String, Object> apiResponse = weatherApiRestTemplate.getForObject(url, Map.class);
+
+            if (apiResponse != null) {
+                Map<String, Object> alertsData = (Map<String, Object>) apiResponse.get("alerts");
+                if (alertsData != null) {
+                    List<Map<String, Object>> alertList = (List<Map<String, Object>>) alertsData.get("alert");
+
+                    if (alertList != null) {
+                        for (Map<String, Object> alertItem : alertList) {
+                            Map<String, Object> alert = new HashMap<>();
+
+                            alert.put("title", alertItem.get("headline"));
+                            alert.put("description", alertItem.get("desc"));
+                            alert.put("status", "ALERT"); // WeatherAPI doesn't always provide a status like NWS
+                            alert.put("severity", alertItem.get("severity"));
+                            alert.put("effective", alertItem.get("effective"));
+                            alert.put("expires", alertItem.get("expires"));
+                            alert.put("senderName", alertItem.get("msgtype")); // Using msgtype as senderName
+                            alert.put("areas", alertItem.get("areas"));
+
+                            // Set default color and icon, you can refine this based on severity/event
+                            alert.put("color", "#f39c12"); // Default to orange for alerts
+                            alert.put("icon", "fas fa-exclamation-triangle");
+
+                            alerts.add(alert);
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            System.err.println("❌ Failed to fetch WeatherAPI alerts: " + e.getMessage());
+            // Return empty list, the calling method will handle fallback to mock data
+        }
+
+        return alerts;
     }
 }
